@@ -1,0 +1,58 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/2af4abb1-c8f1-46b9-b39b-e7287d8126d9"
+Resources:
+  CloudTrailTrailNyctlccloudtrailaudit:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudTrail::Trail"
+    DeletionPolicy: "Retain"
+    Properties:
+      IncludeGlobalServiceEvents: true
+      EventSelectors: []
+      KMSKeyId: "arn:aws:kms:eu-west-3:977237814516:key/fb7d5280-5e69-472a-8f1c-a18d53da1c19"
+      AggregationConfigurations:
+      - Templates:
+        - "RESOURCE_ACCESS"
+        - "USER_ACTIONS"
+        - "API_ACTIVITY"
+        EventCategory: "Data"
+      AdvancedEventSelectors:
+      - FieldSelectors:
+        - Field: "resources.type"
+          Equals:
+          - "AWS::Glue::Table"
+        - Field: "eventCategory"
+          Equals:
+          - "Data"
+      - FieldSelectors:
+        - Field: "resources.type"
+          Equals:
+          - "AWS::Lambda::Function"
+        - Field: "eventCategory"
+          Equals:
+          - "Data"
+      - FieldSelectors:
+        - Field: "eventCategory"
+          Equals:
+          - "Management"
+        Name: "S?lecteur d'?v?nements de gestion"
+      - FieldSelectors:
+        - Field: "resources.type"
+          Equals:
+          - "AWS::S3::Object"
+        - Field: "eventCategory"
+          Equals:
+          - "Data"
+      TrailName: "nyctlc-cloudtrail-audit"
+      IsOrganizationTrail: false
+      InsightSelectors: []
+      IsMultiRegionTrail: true
+      S3BucketName: "nyctlc-s3-cloudtrail-logs"
+      EnableLogFileValidation: true
+      Tags:
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "Jacques"
+        Key: "Owner"
+      IsLogging: true
