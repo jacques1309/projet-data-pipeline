@@ -1,0 +1,45 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/78e43bbd-9c42-4a25-9e3b-cfc618c082a8"
+Resources:
+  DynamoDBTableNyctlcdynamodbpipelinestate:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::DynamoDB::Table"
+    DeletionPolicy: "Retain"
+    Properties:
+      SSESpecification:
+        SSEEnabled: false
+      TableName: "nyctlc-dynamodb-pipeline-state"
+      AttributeDefinitions:
+      - AttributeType: "S"
+        AttributeName: "dataset"
+      - AttributeType: "S"
+        AttributeName: "period"
+      ContributorInsightsSpecification:
+        Enabled: false
+      BillingMode: "PAY_PER_REQUEST"
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false
+      KeySchema:
+      - KeyType: "HASH"
+        AttributeName: "dataset"
+      - KeyType: "RANGE"
+        AttributeName: "period"
+      WarmThroughput:
+        ReadUnitsPerSecond: 12000
+        WriteUnitsPerSecond: 4000
+      DeletionProtectionEnabled: false
+      Tags:
+      - Value: "none"
+        Key: "DataSensitivity"
+      - Value: "Jacques-Lin"
+        Key: "Owner"
+      - Value: "cross"
+        Key: "Layer"
+      - Value: "pipeline"
+        Key: "CostCenter"
+      - Value: "nyctlc"
+        Key: "Project"
+      TimeToLiveSpecification:
+        Enabled: false

@@ -1,0 +1,182 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:us-east-1:977237814516:generatedTemplate/8422d2b0-6140-4d52-80f8-1ca5a5f64d55"
+Resources:
+  S3BucketNyctlcs3cloudtraillogs:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "nyctlc-s3-cloudtrail-logs"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
+      LifecycleConfiguration:
+        TransitionDefaultMinimumObjectSize: "all_storage_classes_128K"
+        Rules:
+        - Status: "Enabled"
+          Transitions:
+          - StorageClass: "DEEP_ARCHIVE"
+            TransitionInDays: 30
+          Id: "nyctlc-archive-after-30d"
+      Tags:
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "Jacques"
+        Key: "Owner"
+      - Value: "Console"
+        Key: "ManagedBy"
+  S3BucketNyctlcs3gold:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "nyctlc-s3-gold"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "aws:kms"
+            KMSMasterKeyID: "arn:aws:kms:eu-west-3:977237814516:key/c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+  S3BucketNyctlcs3scripts:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "nyctlc-s3-scripts"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "aws:kms"
+            KMSMasterKeyID: "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+      Tags:
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "Jacques"
+        Key: "Owner"
+      - Value: "Console"
+        Key: "ManagedBy"
+  S3BucketNyctlcs3bronze:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "nyctlc-s3-bronze"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "ObjectWriter"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "aws:kms"
+            KMSMasterKeyID: "arn:aws:kms:eu-west-3:977237814516:key/82e7e0dd-d237-4996-9869-d0c6f5f0cb16"
+      LifecycleConfiguration:
+        TransitionDefaultMinimumObjectSize: "all_storage_classes_128K"
+        Rules:
+        - Status: "Enabled"
+          Transitions:
+          - StorageClass: "STANDARD_IA"
+            TransitionInDays: 30
+          - StorageClass: "GLACIER_IR"
+            TransitionInDays: 90
+          - StorageClass: "DEEP_ARCHIVE"
+            TransitionInDays: 180
+          Id: "nyctlc-archive-30d-90d-180d"
+      Tags:
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "Bronze"
+        Key: "Layer"
+      - Value: "Jacques"
+        Key: "Owner"
+  S3BucketNyctlcs3silver:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "nyctlc-s3-silver"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "aws:kms"
+            KMSMasterKeyID: "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+      LifecycleConfiguration:
+        TransitionDefaultMinimumObjectSize: "all_storage_classes_128K"
+        Rules:
+        - Status: "Enabled"
+          Transitions:
+          - StorageClass: "STANDARD_IA"
+            TransitionInDays: 30
+          - StorageClass: "GLACIER_IR"
+            TransitionInDays: 90
+          Id: "nyctlc-archive-after-30d-90d"
+      Tags:
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "Silver"
+        Key: "Layer"
+      - Value: "Thomas"
+        Key: "Owner"
