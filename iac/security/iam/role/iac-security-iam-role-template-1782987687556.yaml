@@ -1,0 +1,446 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/dd3b4c50-5415-40e5-869a-3e36e1621d88"
+Resources:
+  IAMRoleNyctlciameventbrige:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/Amazon-EventBridge-Scheduler-Execution-Policy-50305b00-6060-43f2-869b-6e1ff25cc8d9"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-iam-eventbrige"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "977237814516"
+          Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "scheduler.amazonaws.com"
+  IAMRoleNyctlciamrolegluesilver:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-iam-role-glue-silver"
+      Description: "Allows Glue to call AWS services on your behalf. "
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action: "iam:PassRole"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+          - Resource:
+            - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+            - "arn:aws:kms:eu-west-3:977237814516:key/82e7e0dd-d237-4996-9869-d0c6f5f0cb16"
+            Action:
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            - "dynamodb:Query"
+            Effect: "Allow"
+            Sid: "VisualEditor1"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+            Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor2"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+            Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor3"
+        PolicyName: "nyctlc-iam-policy-bronze-silver-kms-access"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "glue.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessSilver"
+      - Value: "true"
+        Key: "AccessBronze"
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "jacques"
+        Key: "Owner"
+      - Value: "Silver"
+        Key: "Layer"
+      - Value: "Console"
+        Key: "ManagedBy"
+  IAMRoleNyctlclambdagetnextperiodbronzeroleamcrzljy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AWSLambdaBasicExecutionRole-db3ba0c6-5874-4694-a611-65ddad1102a6"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-lambda-getnextperiod-bronze-role-amcrzljy"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+            Action: "dynamodb:Query"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+        PolicyName: "nyctlc-iam-policy-lambda-query-dynamo"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+  IAMRoleAWSServiceRoleForAPIGateway:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/ops.apigateway.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/APIGatewayServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForAPIGateway"
+      Description: "The Service Linked Role is used by Amazon API Gateway."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "ops.apigateway.amazonaws.com"
+  IAMRoleAwsquicksightservicerolev0:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AWSQuickSightRedshiftPolicy"
+      - "arn:aws:iam::977237814516:policy/service-role/AWSQuickSightRDSPolicy"
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::977237814516:policy/service-role/AWSQuickSightIAMPolicy"
+      - "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+      MaxSessionDuration: 3600
+      RoleName: "aws-quicksight-service-role-v0"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource:
+            - "arn:aws:s3:::nyctlc-s3-gold/*"
+            - "arn:aws:s3:::/nyctlc-s3-scripts/athena/*"
+            - "arn:aws:s3:::nyctlc-s3-gold"
+            - "arn:aws:s3:::nyctlc-s3-scripts"
+            - "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+            Action:
+            - "s3:GetObject"
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            - "s3:ListBucket"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+            Action:
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor1"
+        PolicyName: "nyctlc-iam-policy-quicksight"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action:
+          - "sts:AssumeRole"
+          - "sts:TagSession"
+          Effect: "Allow"
+          Principal:
+            Service: "quicksight.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessSilver"
+      - Value: "true"
+        Key: "AccessGold"
+  IAMRoleNyctlclambdaextractbronzerolexa6xkpdu:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AWSLambdaBasicExecutionRole-b66c1140-fdf9-4cb0-8919-9a47af08e405"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-lambda-extract-bronze-role-xa6xkpdu"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource:
+            - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+            - "arn:aws:kms:eu-west-3:977237814516:key/82e7e0dd-d237-4996-9869-d0c6f5f0cb16"
+            - "arn:aws:s3:::nyctlc-s3-bronze"
+            Action:
+            - "kms:Decrypt"
+            - "kms:Encrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            - "dynamodb:Query"
+            - "s3:ListBucket"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+          - Resource: "arn:aws:s3:::nyctlc-s3-bronze/*"
+            Action:
+            - "s3:PutObject"
+            - "s3:GetObject"
+            Effect: "Allow"
+            Sid: "VisualEditor1"
+        PolicyName: "nyctlc-iam-lambda-extract-bronze"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessBronze"
+  IAMRoleStepFunctionsnyctlcstepfunctionpipelineorchesrolehj9s04vmz:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AthenaStartQueryExecutionManagementScopedAccessPolicy-a2de3023-db86-4150-b071-a77843e6172b"
+      - "arn:aws:iam::977237814516:policy/service-role/LambdaInvokeScopedAccessPolicy-e6ecbfaa-aa58-4faf-ac41-31161946b914"
+      - "arn:aws:iam::977237814516:policy/service-role/GlueJobRunManagementFullAccessPolicy-19cd31f8-483b-46b4-ab05-f97b2091d9e1"
+      - "arn:aws:iam::977237814516:policy/service-role/XRayAccessPolicy-c0a9d41d-fafb-4ef8-a35a-ab56b6b952b4"
+      - "arn:aws:iam::977237814516:policy/service-role/DynamoDBTableContentScopedAccessPolicy-fb8adc34-afe5-4bcf-8b8f-c50c3ff8a143"
+      - "arn:aws:iam::977237814516:policy/service-role/CloudWatchLogsDeliveryFullAccessPolicy-a84d99af-e02a-42f8-a701-cfd68cf540c9"
+      - "arn:aws:iam::977237814516:policy/service-role/SnsPublishScopedAccessPolicy-5bd34d67-01ec-4b5a-9b23-e5a6c6f9a620"
+      MaxSessionDuration: 3600
+      RoleName: "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "states.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessSilver"
+      - Value: "true"
+        Key: "AccessGold"
+  IAMRoleAWSServiceRoleForTrustedAdvisor:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/trustedadvisor.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSTrustedAdvisorServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForTrustedAdvisor"
+      Description: "Access for the AWS Trusted Advisor Service to help reduce cost,\
+        \ increase performance, and improve security of your AWS environment."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "trustedadvisor.amazonaws.com"
+  IAMRoleAWSServiceRoleForResourceExplorer:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/resource-explorer-2.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSResourceExplorerServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForResourceExplorer"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "resource-explorer-2.amazonaws.com"
+  IAMRoleBudgetroot:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AWSBudgetsActionsWithAWSResourceControlAccess"
+      MaxSessionDuration: 3600
+      RoleName: "budget-root"
+      Description: "Allows Budgets to create and manage AWS resources on your behalf"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "budgets.amazonaws.com"
+          Sid: ""
+  IAMRoleSibudgetdepassealors:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AWSBudgetsActionsWithAWSResourceControlAccess"
+      MaxSessionDuration: 3600
+      RoleName: "si_budget_depasse_alors"
+      Description: "tout interdire !!!"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "budgets.amazonaws.com"
+  IAMRoleNyctlciamroleeventbridgepipelinescheduler:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/Amazon-EventBridge-Scheduler-Execution-Policy-c84c386b-c31c-4967-85df-1a8b09b80cb8"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-iam-role-eventbridge-pipeline-scheduler"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "977237814516"
+          Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "scheduler.amazonaws.com"
+  IAMRoleAWSServiceRoleForCloudTrail:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/cloudtrail.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/CloudTrailServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForCloudTrail"
+      Description: "Allows AWS CloudTrail to access AWS resources on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "cloudtrail.amazonaws.com"
+  IAMRoleAWSServiceRoleForRDS:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/rds.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForRDS"
+      Description: "Allows Amazon RDS to manage AWS resources on your behalf"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "rds.amazonaws.com"
+  IAMRoleNyctlclambdacleanprefixgoldroleyvs1vagx:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AWSLambdaBasicExecutionRole-5c3f1889-6ed4-4455-95d7-76328162d2ea"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-lambda-clean-prefix-gold-role-yvs1vagx"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessGold"
+  IAMRoleNyctlclambdaapirestdataexpositionrolerj4060p3:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AWSLambdaBasicExecutionRole-a22dce09-85af-4091-afa3-bf0cd99704fe"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-lambda-apirest-data-exposition-role-rj4060p3"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessGold"
+  IAMRoleAWSServiceRoleForSupport:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/support.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AWSSupportServiceRolePolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForSupport"
+      Description: "Enables resource access for AWS to provide billing, administrative\
+        \ and support services"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "support.amazonaws.com"

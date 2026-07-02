@@ -1,0 +1,483 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/c0521e82-1fab-42c1-aed7-e7b21b94a07a"
+Resources:
+  KMSAliasAliasnyctlckmsquicksight:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "3aa3cca9-b414-441e-bc35-22e24b624857"
+      AliasName: "alias/nyctlc-kms-quicksight"
+  KMSAliasAliasnyctlckmss3bronze:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "82e7e0dd-d237-4996-9869-d0c6f5f0cb16"
+      AliasName: "alias/nyctlc-kms-s3-bronze"
+  KMSKeyOa:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: ""
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "kms:*"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Enable IAM User Permissions"
+        - Resource: "*"
+          Action:
+          - "kms:Create*"
+          - "kms:Describe*"
+          - "kms:Enable*"
+          - "kms:List*"
+          - "kms:Put*"
+          - "kms:Update*"
+          - "kms:Revoke*"
+          - "kms:Disable*"
+          - "kms:Get*"
+          - "kms:Delete*"
+          - "kms:TagResource"
+          - "kms:UntagResource"
+          - "kms:ScheduleKeyDeletion"
+          - "kms:CancelKeyDeletion"
+          - "kms:RotateKeyOnDemand"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:user/Jacques-Lin"
+          Sid: "Allow access for Key Administrators"
+        Id: "key-consolepolicy-3"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: false
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSKeyLb:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: ""
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "kms:*"
+          Effect: "Allow"
+          Principal:
+            AWS:
+            - "arn:aws:iam::977237814516:root"
+            - "arn:aws:iam::977237814516:user/Jacques-Lin"
+          Sid: "Enable IAM User Permissions"
+        - Condition:
+            StringEquals:
+              aws:SourceArn: "arn:aws:cloudtrail:eu-west-3:977237814516:trail/nyctlc-cloudtrail-audit"
+            StringLike:
+              kms:EncryptionContext:aws:cloudtrail:arn: "arn:aws:cloudtrail:*:977237814516:trail/*"
+          Resource: "*"
+          Action: "kms:GenerateDataKey*"
+          Effect: "Allow"
+          Principal:
+            Service: "cloudtrail.amazonaws.com"
+          Sid: "Allow CloudTrail to encrypt logs"
+        - Resource: "*"
+          Action: "kms:DescribeKey"
+          Effect: "Allow"
+          Principal:
+            Service: "cloudtrail.amazonaws.com"
+          Sid: "Allow CloudTrail to describe key"
+        - Condition:
+            StringEquals:
+              kms:CallerAccount: "977237814516"
+            StringLike:
+              kms:EncryptionContext:aws:cloudtrail:arn: "arn:aws:cloudtrail:*:977237814516:trail/*"
+          Resource: "*"
+          Action:
+          - "kms:Decrypt"
+          - "kms:ReEncryptFrom"
+          Effect: "Allow"
+          Principal:
+            AWS: "*"
+          Sid: "Allow principals in the account to decrypt log files"
+        - Condition:
+            StringEquals:
+              kms:CallerAccount: "977237814516"
+            StringLike:
+              kms:EncryptionContext:aws:cloudtrail:arn: "arn:aws:cloudtrail:*:977237814516:trail/*"
+          Resource: "*"
+          Action:
+          - "kms:Decrypt"
+          - "kms:ReEncryptFrom"
+          Effect: "Allow"
+          Principal:
+            AWS: "*"
+          Sid: "Enable cross account log decryption"
+        Id: "Key policy created by CloudTrail"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: false
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSKeyUl:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: "Default key that protects my Lambda functions when no other key\
+        \ is defined"
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              kms:CallerAccount: "977237814516"
+              kms:ViaService: "lambda.eu-west-3.amazonaws.com"
+          Resource: "*"
+          Action:
+          - "kms:Encrypt"
+          - "kms:Decrypt"
+          - "kms:ReEncrypt*"
+          - "kms:GenerateDataKey*"
+          - "kms:CreateGrant"
+          - "kms:DescribeKey"
+          Effect: "Allow"
+          Principal:
+            AWS: "*"
+          Sid: "Allow access through AWS Lambda for all principals in the account\
+            \ that are authorized to use AWS Lambda"
+        - Resource: "*"
+          Action:
+          - "kms:Describe*"
+          - "kms:Get*"
+          - "kms:List*"
+          - "kms:RevokeGrant"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Allow direct access to key metadata to the account"
+        Id: "auto-awslambda"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: true
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSKey:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: ""
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "kms:*"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Enable IAM User Permissions"
+        - Resource: "*"
+          Action:
+          - "kms:Create*"
+          - "kms:Describe*"
+          - "kms:Enable*"
+          - "kms:List*"
+          - "kms:Put*"
+          - "kms:Update*"
+          - "kms:Revoke*"
+          - "kms:Disable*"
+          - "kms:Get*"
+          - "kms:Delete*"
+          - "kms:TagResource"
+          - "kms:UntagResource"
+          - "kms:ScheduleKeyDeletion"
+          - "kms:CancelKeyDeletion"
+          - "kms:RotateKeyOnDemand"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:user/Jacques-Lin"
+          Sid: "Allow access for Key Administrators"
+        Id: "key-consolepolicy-3"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: false
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSKeyJz:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: "Default key that protects my SNS data when no other key is defined"
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              kms:CallerAccount: "977237814516"
+              kms:ViaService: "sns.eu-west-3.amazonaws.com"
+          Resource: "*"
+          Action:
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey*"
+          - "kms:CreateGrant"
+          - "kms:ListGrants"
+          - "kms:DescribeKey"
+          Effect: "Allow"
+          Principal:
+            AWS: "*"
+          Sid: "Allow access through SNS for all principals in the account that are\
+            \ authorized to use SNS"
+        - Resource: "*"
+          Action:
+          - "kms:Describe*"
+          - "kms:Get*"
+          - "kms:List*"
+          - "kms:RevokeGrant"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Allow direct access to key metadata to the account"
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "977237814516"
+            ArnLike:
+              aws:SourceArn: "arn:*:sns:eu-west-3:977237814516:*"
+          Resource: "*"
+          Action: "kms:Decrypt"
+          Effect: "Allow"
+          Principal:
+            Service: "sns.amazonaws.com"
+          Sid: "Allow SNS to decrypt archived messages"
+        Id: "auto-sns-2"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: true
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSKeyHx:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: ""
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "kms:*"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Enable IAM User Permissions"
+        - Resource: "*"
+          Action:
+          - "kms:Create*"
+          - "kms:Describe*"
+          - "kms:Enable*"
+          - "kms:List*"
+          - "kms:Put*"
+          - "kms:Update*"
+          - "kms:Revoke*"
+          - "kms:Disable*"
+          - "kms:Get*"
+          - "kms:Delete*"
+          - "kms:TagResource"
+          - "kms:UntagResource"
+          - "kms:ScheduleKeyDeletion"
+          - "kms:CancelKeyDeletion"
+          - "kms:RotateKeyOnDemand"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:user/Jacques-Lin"
+          Sid: "Allow access for Key Administrators"
+        Id: "key-consolepolicy-3"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: false
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSAliasAliasnyctlckmss3gold:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+      AliasName: "alias/nyctlc-kms-s3-gold"
+  KMSKeyPa:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: ""
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "kms:*"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Enable IAM User Permissions"
+        - Resource: "*"
+          Action:
+          - "kms:Create*"
+          - "kms:Describe*"
+          - "kms:Enable*"
+          - "kms:List*"
+          - "kms:Put*"
+          - "kms:Update*"
+          - "kms:Revoke*"
+          - "kms:Disable*"
+          - "kms:Get*"
+          - "kms:Delete*"
+          - "kms:TagResource"
+          - "kms:UntagResource"
+          - "kms:ScheduleKeyDeletion"
+          - "kms:CancelKeyDeletion"
+          - "kms:RotateKeyOnDemand"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:user/Jacques-Lin"
+          Sid: "Allow access for Key Administrators"
+        Id: "key-consolepolicy-3"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: false
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSKeyOs:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: "Default key that protects my S3 objects when no other key is defined"
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              kms:CallerAccount: "977237814516"
+              kms:ViaService: "s3.eu-west-3.amazonaws.com"
+          Resource: "*"
+          Action:
+          - "kms:Encrypt"
+          - "kms:Decrypt"
+          - "kms:ReEncrypt*"
+          - "kms:GenerateDataKey*"
+          - "kms:DescribeKey"
+          Effect: "Allow"
+          Principal:
+            AWS: "*"
+          Sid: "Allow access through S3 for all principals in the account that are\
+            \ authorized to use S3"
+        - Resource: "*"
+          Action:
+          - "kms:Describe*"
+          - "kms:Get*"
+          - "kms:List*"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Allow direct access to key metadata to the account"
+        Id: "auto-s3-2"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: true
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSAliasAliasnyctlckmss3silver:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "3f5769cc-215a-48c1-a751-c773e9e427a7"
+      AliasName: "alias/nyctlc-kms-s3-silver"
+  KMSKeyMu:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Key"
+    DeletionPolicy: "Retain"
+    Properties:
+      Origin: "AWS_KMS"
+      MultiRegion: false
+      Description: ""
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "kms:*"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:root"
+          Sid: "Enable IAM User Permissions"
+        - Resource: "*"
+          Action:
+          - "kms:Create*"
+          - "kms:Describe*"
+          - "kms:Enable*"
+          - "kms:List*"
+          - "kms:Put*"
+          - "kms:Update*"
+          - "kms:Revoke*"
+          - "kms:Disable*"
+          - "kms:Get*"
+          - "kms:Delete*"
+          - "kms:TagResource"
+          - "kms:UntagResource"
+          - "kms:ScheduleKeyDeletion"
+          - "kms:CancelKeyDeletion"
+          - "kms:RotateKeyOnDemand"
+          Effect: "Allow"
+          Principal:
+            AWS: "arn:aws:iam::977237814516:user/Jacques-Lin"
+          Sid: "Allow access for Key Administrators"
+        Id: "key-consolepolicy-3"
+      KeySpec: "SYMMETRIC_DEFAULT"
+      Enabled: true
+      EnableKeyRotation: false
+      KeyUsage: "ENCRYPT_DECRYPT"
+      Tags: []
+  KMSAliasAliasnyctlckmscloudtraillogs:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "9fde1ba1-0777-4e34-ba59-345a64d6ebb1"
+      AliasName: "alias/nyctlc-kms-cloudtrail-logs"
+  KMSAliasAliasnyctlckmscloudtrail:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "fb7d5280-5e69-472a-8f1c-a18d53da1c19"
+      AliasName: "alias/nyctlc-kms-cloudtrail"
+  KMSAliasAliasnyctlckmss3scripts:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::KMS::Alias"
+    DeletionPolicy: "Retain"
+    Properties:
+      TargetKeyId: "60095d4e-9326-4a46-b044-8812c04767bd"
+      AliasName: "alias/nyctlc-kms-s3-scripts"

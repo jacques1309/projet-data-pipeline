@@ -1,0 +1,23 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/25396a84-5a79-4b5f-8cc3-10c0adbd0ae0"
+Resources:
+  IAMGroupDataengineersteam:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Group"
+    DeletionPolicy: "Retain"
+    Properties:
+      GroupName: "data-engineers-team"
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/LakeFormation+MWAA+PassServiceRole+KMS"
+      - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess_v2"
+      - "arn:aws:iam::aws:policy/AWSCloudShellFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonEventBridgeFullAccess"
+      - "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::aws:policy/AWSGlueConsoleFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonAthenaFullAccess"
+      - "arn:aws:iam::aws:policy/AWSStepFunctionsFullAccess"
+      - "arn:aws:iam::aws:policy/CloudWatchFullAccess"

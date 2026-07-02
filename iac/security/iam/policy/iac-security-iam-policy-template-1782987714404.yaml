@@ -1,0 +1,900 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/d4abee3c-8120-4aed-933f-45346a6f1590"
+Resources:
+  IAMManagedPolicyPolicyserviceroleAmazonEventBridgeSchedulerExecutionPolicyc84c386bc31c496785df1a8b09b80cb8:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "Amazon-EventBridge-Scheduler-Execution-Policy-c84c386b-c31c-4967-85df-1a8b09b80cb8"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:states:eu-west-3:977237814516:stateMachine:nyctlc-stepfunction-pipeline-orchestrator"
+          Action:
+          - "states:StartExecution"
+          Effect: "Allow"
+      Roles:
+      - "nyctlc-iam-role-eventbridge-pipeline-scheduler"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleSnsPublishScopedAccessPolicy04b9c1c6607942b7865a6459e9d5ff7a:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "SnsPublishScopedAccessPolicy-04b9c1c6-6079-42b7-865a-6459e9d5ff7a"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to publish to SNS targets on your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:sns:eu-west-3:977237814516:nyctlc-pipeline-failure"
+          - "arn:aws:sns:eu-west-3:977237814516:nyctlc-pipeline-success"
+          Action:
+          - "sns:Publish"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRoleb53a2d7d6a5e43c1ab1f84143c70c667:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-b53a2d7d-6a5e-43c1-ab1f-84143c70c667"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:eu-west-3:977237814516:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:eu-west-3:977237814516:log-group:/aws/lambda/nyctlc-lambda-extract-bronze:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleSnsPublishScopedAccessPolicy5bd34d6701ec4b5a9b23e5a6c6f9a620:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "SnsPublishScopedAccessPolicy-5bd34d67-01ec-4b5a-9b23-e5a6c6f9a620"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to publish to SNS targets on your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline"
+          Action: "sns:Publish"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAthenaStartQueryExecutionManagementScopedAccessPolicya2de3023db864150b071a77843e6172b:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AthenaStartQueryExecutionManagementScopedAccessPolicy-a2de3023-db86-4150-b071-a77843e6172b"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to start Athena query executions on\
+        \ your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+          - "arn:aws:athena:eu-west-3:977237814516:workgroup/primary"
+          - "arn:aws:athena:eu-west-3:977237814516:datacatalog/*"
+          - "arn:aws:s3:::nyctlc-s3-gold/*"
+          - "arn:aws:s3:::nyctlc-s3-silver/*"
+          - "arn:aws:s3:::nyctlc-s3-scripts/athena/results/*"
+          - "arn:aws:s3:::nyctlc-s3-gold"
+          - "arn:aws:s3:::nyctlc-s3-silver"
+          - "arn:aws:s3:::nyctlc-s3-scripts"
+          - "arn:aws:glue:eu-west-3:977237814516:userDefinedFunction/*"
+          - "arn:aws:glue:eu-west-3:977237814516:catalog"
+          - "arn:aws:glue:eu-west-3:977237814516:table/*"
+          - "arn:aws:glue:eu-west-3:977237814516:database/*"
+          Action:
+          - "glue:BatchCreatePartition"
+          - "kms:Decrypt"
+          - "glue:DeleteDatabase"
+          - "glue:GetPartitions"
+          - "glue:BatchDeletePartition"
+          - "glue:UpdateTable"
+          - "glue:DeleteTable"
+          - "s3:AbortMultipartUpload"
+          - "kms:DescribeKey"
+          - "glue:CreatePartition"
+          - "athena:getQueryExecution"
+          - "athena:startQueryExecution"
+          - "glue:UpdatePartition"
+          - "glue:UpdateDatabase"
+          - "athena:getDataCatalog"
+          - "athena:stopQueryExecution"
+          - "glue:CreateTable"
+          - "glue:GetTables"
+          - "glue:BatchGetPartition"
+          - "glue:GetDatabases"
+          - "s3:ListMultipartUploadParts"
+          - "glue:GetTable"
+          - "glue:GetDatabase"
+          - "s3:PutObject"
+          - "s3:GetObject"
+          - "glue:GetPartition"
+          - "glue:CreateDatabase"
+          - "kms:GenerateDataKey"
+          - "athena:DeleteDataCatalog"
+          - "glue:BatchDeleteTable"
+          - "glue:DeletePartition"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource: "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+          Action:
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey"
+          - "kms:DescribeKey"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+        - Resource: "*"
+          Action: "lakeformation:GetDataAccess"
+          Effect: "Allow"
+          Sid: "VisualEditor2"
+        - Resource:
+          - "arn:aws:s3:::*"
+          - "arn:aws:kms:eu-west-3:977237814516:key/c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+          Action:
+          - "s3:ListBucketMultipartUploads"
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey"
+          - "s3:CreateBucket"
+          - "kms:DescribeKey"
+          - "s3:ListBucket"
+          - "s3:GetBucketLocation"
+          Effect: "Allow"
+          Sid: "VisualEditor3"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyLakeFormationMWAAPassServiceRoleKMS:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "LakeFormation+MWAA+PassServiceRole+KMS"
+      Path: "/"
+      Description: ""
+      Groups:
+      - "data-engineers-team"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              iam:PassedToService:
+              - "glue.amazonaws.com"
+              - "airflow.amazonaws.com"
+              - "elasticmapreduce.amazonaws.com"
+              - "states.amazonaws.com"
+          Resource: "*"
+          Action: "iam:PassRole"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource: "*"
+          Action:
+          - "kms:Decrypt"
+          - "apigateway:AddCertificateToDomain"
+          - "iam:CreateRole"
+          - "iam:AttachRolePolicy"
+          - "iam:PutRolePolicy"
+          - "apigateway:DELETE"
+          - "apigateway:CreateAccessAssociation"
+          - "apigateway:UpdateRestApiPolicy"
+          - "apigateway:SetWebACL"
+          - "kms:Encrypt"
+          - "apigateway:PATCH"
+          - "kms:DescribeKey"
+          - "kms:CreateKey"
+          - "quicksight:*"
+          - "apigateway:GET"
+          - "iam:CreatePolicyVersion"
+          - "iam:GetRole"
+          - "apigateway:UpdateDomainNamePolicy"
+          - "apigateway:PUT"
+          - "apigateway:RemoveCertificateFromDomain"
+          - "apigateway:RejectAccessAssociation"
+          - "iam:CreatePolicy"
+          - "kms:ListKeys"
+          - "iam:CreateServiceLinkedRole"
+          - "iam:ListPolicyVersions"
+          - "apigateway:UpdateDomainNameManagementPolicy"
+          - "kms:ListAliases"
+          - "kms:GenerateDataKey"
+          - "kms:CreateAlias"
+          - "apigateway:POST"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRoleda850ef6c58546889c48c5e53e1b44f2:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-da850ef6-c585-4688-9c48-c5e53e1b44f2"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:us-east-1:977237814516:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:us-east-1:977237814516:log-group:/aws/lambda/http-function-url-tutorial:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRolea22dce0985af4091afa3bf0cd99704fe:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-a22dce09-85af-4091-afa3-bf0cd99704fe"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "glue:GetDatabase"
+          - "kms:ListKeys"
+          - "athena:StartQueryExecution"
+          - "glue:GetPartition"
+          - "glue:GetTables"
+          - "glue:GetPartitions"
+          - "athena:StopQueryExecution"
+          - "athena:GetQueryExecution"
+          - "athena:GetQueryResults"
+          - "glue:GetDatabases"
+          - "glue:GetTable"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource: "arn:aws:logs:eu-west-3:977237814516:log-group:/aws/lambda/nyctlc-lambda-apirest-data-exposition:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+        - Resource:
+          - "arn:aws:logs:eu-west-3:977237814516:*"
+          - "arn:aws:kms:eu-west-3:977237814516:key/c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+          - "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+          - "arn:aws:s3:::nyctlc-s3-gold/*"
+          - "arn:aws:s3:::nyctlc-s3-scripts/*"
+          - "arn:aws:s3:::nyctlc-s3-gold"
+          - "arn:aws:s3:::nyctlc-s3-scripts"
+          Action:
+          - "s3:PutObject"
+          - "s3:GetObject"
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey"
+          - "kms:DescribeKey"
+          - "s3:ListBucket"
+          - "logs:CreateLogGroup"
+          - "s3:GetBucketLocation"
+          Effect: "Allow"
+          Sid: "VisualEditor2"
+      Roles:
+      - "nyctlc-lambda-apirest-data-exposition-role-rj4060p3"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleXRayAccessPolicy4abe0baefb284a2db5f77e850ec04087:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "XRayAccessPolicy-4abe0bae-fb28-4a2d-b5f7-7e850ec04087"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to call X-Ray daemon on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          - "xray:GetSamplingRules"
+          - "xray:GetSamplingTargets"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRoleb66c1140fdf94cb089199a47af08e405:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-b66c1140-fdf9-4cb0-8919-9a47af08e405"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:eu-west-3:977237814516:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:eu-west-3:977237814516:log-group:/aws/lambda/nyctlc-lambda-extract-bronze:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+      Roles:
+      - "nyctlc-lambda-extract-bronze-role-xa6xkpdu"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCloudWatchLogsDeliveryFullAccessPolicy297a46e9c52c447ca877a197661a2e04:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "CloudWatchLogsDeliveryFullAccessPolicy-297a46e9-c52c-447c-a877-a197661a2e04"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to write execution logs to CloudWatch\
+        \ Logs on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "logs:CreateLogDelivery"
+          - "logs:GetLogDelivery"
+          - "logs:UpdateLogDelivery"
+          - "logs:DeleteLogDelivery"
+          - "logs:ListLogDeliveries"
+          - "logs:PutResourcePolicy"
+          - "logs:DescribeResourcePolicies"
+          - "logs:DescribeLogGroups"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAmazonEventBridgeSchedulerExecutionPolicy50305b00606043f2869b6e1ff25cc8d9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "Amazon-EventBridge-Scheduler-Execution-Policy-50305b00-6060-43f2-869b-6e1ff25cc8d9"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:states:eu-west-3:977237814516:stateMachine:nyctlc-stepfunction-lambda-bronze"
+          Action:
+          - "states:StartExecution"
+          Effect: "Allow"
+      Roles:
+      - "nyctlc-iam-eventbrige"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRole5c3f18896ed4445595d776328162d2ea:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-5c3f1889-6ed4-4455-95d7-76328162d2ea"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:s3:::nyctlc-s3-gold"
+          - "arn:aws:logs:eu-west-3:977237814516:*"
+          Action:
+          - "s3:ListBucket"
+          - "logs:CreateLogGroup"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource:
+          - "arn:aws:logs:eu-west-3:977237814516:log-group:/aws/lambda/nyctlc-lambda-clean-prefix-gold:*"
+          - "arn:aws:s3:::nyctlc-s3-gold/revenue_by_zone_hour/*"
+          - "arn:aws:s3:::nyctlc-s3-gold/service_comparison/*"
+          - "arn:aws:s3:::nyctlc-s3-gold/demand_timeseries/*"
+          - "arn:aws:s3:::nyctlc-s3-gold/od_matrix/*"
+          Action:
+          - "logs:CreateLogStream"
+          - "s3:DeleteObject"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+      Roles:
+      - "nyctlc-lambda-clean-prefix-gold-role-yvs1vagx"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleXRayAccessPolicy2e926b7aab2f4cd69f652be4ccb36740:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "XRayAccessPolicy-2e926b7a-ab2f-4cd6-9f65-2be4ccb36740"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to call X-Ray daemon on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          - "xray:GetSamplingRules"
+          - "xray:GetSamplingTargets"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSQuickSightRDSPolicy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSQuickSightRDSPolicy"
+      Path: "/service-role/"
+      Description: "Grants Amazon QuickSight describe permissions to AWS RDS resources"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "rds:Describe*"
+          Effect: "Allow"
+      Roles:
+      - "aws-quicksight-service-role-v0"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleXRayAccessPolicyc0a9d41dfafb4ef8a35aab56b6b952b4:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "XRayAccessPolicy-c0a9d41d-fafb-4ef8-a35a-ab56b6b952b4"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to call X-Ray daemon on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          - "xray:GetSamplingRules"
+          - "xray:GetSamplingTargets"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleXRayAccessPolicycdea4ac1779040c6b8f558ac13a0469e:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "XRayAccessPolicy-cdea4ac1-7790-40c6-b8f5-58ac13a0469e"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to call X-Ray daemon on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          - "xray:GetSamplingRules"
+          - "xray:GetSamplingTargets"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleDynamoDBTableContentScopedAccessPolicyfb8adc34afe54bcf8b8fc50c3ff8a143:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "DynamoDBTableContentScopedAccessPolicy-fb8adc34-afe5-4bcf-8b8f-c50c3ff8a143"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to perform DynamoDB actions on your\
+        \ behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+          - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-pipeline-state"
+          Action:
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:UpdateItem"
+          - "dynamodb:DeleteItem"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleXRayAccessPolicyb9f005b28ac046df929bd941ef6db37f:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "XRayAccessPolicy-b9f005b2-8ac0-46df-929b-d941ef6db37f"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to call X-Ray daemon on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          - "xray:GetSamplingRules"
+          - "xray:GetSamplingTargets"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSQuickSightRedshiftPolicy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSQuickSightRedshiftPolicy"
+      Path: "/service-role/"
+      Description: "Grants Amazon QuickSight describe permissions to Amazon Redshift\
+        \ resources"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "redshift:Describe*"
+          Effect: "Allow"
+      Roles:
+      - "aws-quicksight-service-role-v0"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSQuickSightIAMPolicy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSQuickSightIAMPolicy"
+      Path: "/service-role/"
+      Description: "Grants Amazon QuickSight list permissions to AWS IAM resources"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action: "iam:List*"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource:
+          - "arn:aws:s3:::nyctlc-s3-gold"
+          - "arn:aws:kms:eu-west-3:977237814516:key/c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+          Action:
+          - "kms:Decrypt"
+          - "kms:DescribeKey"
+          - "s3:ListBucket"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+        - Resource:
+          - "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+          - "arn:aws:s3:::nyctlc-s3-gold/*"
+          Action:
+          - "s3:GetObject"
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey"
+          - "kms:DescribeKey"
+          Effect: "Allow"
+          Sid: "VisualEditor2"
+      Roles:
+      - "aws-quicksight-service-role-v0"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleLambdaInvokeScopedAccessPolicy808be42d817a4256863a13476ceef8d7:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "LambdaInvokeScopedAccessPolicy-808be42d-817a-4256-863a-13476ceef8d7"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to invoke Lambda functions on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:*"
+          Action:
+          - "lambda:InvokeFunction"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze"
+          Action:
+          - "lambda:InvokeFunction"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCloudWatchLogsDeliveryFullAccessPolicybe808b4b5a474c1797fd07dbad0991cc:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "CloudWatchLogsDeliveryFullAccessPolicy-be808b4b-5a47-4c17-97fd-07dbad0991cc"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to write execution logs to CloudWatch\
+        \ Logs on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "logs:CreateLogDelivery"
+          - "logs:GetLogDelivery"
+          - "logs:UpdateLogDelivery"
+          - "logs:DeleteLogDelivery"
+          - "logs:ListLogDeliveries"
+          - "logs:PutResourcePolicy"
+          - "logs:DescribeResourcePolicies"
+          - "logs:DescribeLogGroups"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRoledb3ba0c658744694a61165ddad1102a6:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-db3ba0c6-5874-4694-a611-65ddad1102a6"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:eu-west-3:977237814516:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:eu-west-3:977237814516:log-group:/aws/lambda/nyctlc-lambda-getnextperiod-bronze:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+      Roles:
+      - "nyctlc-lambda-getnextperiod-bronze-role-amcrzljy"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleGlueJobRunManagementFullAccessPolicyc8f03a1f28294dec9c9402205a484631:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "GlueJobRunManagementFullAccessPolicy-c8f03a1f-2829-4dec-9c94-02205a484631"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to run Glue jobs on your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "glue:StartJobRun"
+          - "glue:GetJobRun"
+          - "glue:GetJobRuns"
+          - "glue:BatchStopJobRun"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleGlueJobRunManagementFullAccessPolicy19cd31f8483b46b4ab05f97b2091d9e1:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "GlueJobRunManagementFullAccessPolicy-19cd31f8-483b-46b4-ab05-f97b2091d9e1"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to run Glue jobs on your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "glue:StartJobRun"
+          - "glue:GetJobRun"
+          - "glue:GetJobRuns"
+          - "glue:BatchStopJobRun"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleLambdaInvokeScopedAccessPolicyff9d9a343a9c4747904f2bd00a4e3c63:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "LambdaInvokeScopedAccessPolicy-ff9d9a34-3a9c-4747-904f-2bd00a4e3c63"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to invoke Lambda functions on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:*"
+          Action:
+          - "lambda:InvokeFunction"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze"
+          Action:
+          - "lambda:InvokeFunction"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCloudWatchLogsDeliveryFullAccessPolicya84d99afe02a42f8a701cfd68cf540c9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "CloudWatchLogsDeliveryFullAccessPolicy-a84d99af-e02a-42f8-a701-cfd68cf540c9"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to write execution logs to CloudWatch\
+        \ Logs on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "logs:CreateLogDelivery"
+          - "logs:GetLogDelivery"
+          - "logs:UpdateLogDelivery"
+          - "logs:DeleteLogDelivery"
+          - "logs:ListLogDeliveries"
+          - "logs:PutResourcePolicy"
+          - "logs:DescribeResourcePolicies"
+          - "logs:DescribeLogGroups"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleLambdaInvokeScopedAccessPolicybbe3ace270b84571bac21d4ee22eda19:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "LambdaInvokeScopedAccessPolicy-bbe3ace2-70b8-4571-bac2-1d4ee22eda19"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to invoke Lambda functions on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:*"
+          Action:
+          - "lambda:InvokeFunction"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze"
+          Action:
+          - "lambda:InvokeFunction"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaDurableExecutionRoleb4496548dd9740529102e53f4cd19791:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaDurableExecutionRole-b4496548-dd97-4052-9102-e53f4cd19791"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:*"
+          Action:
+          - "lambda:CheckpointDurableExecution"
+          - "lambda:GetDurableExecutionState"
+          Effect: "Allow"
+          Sid: "AWSLambdaDurableExecutionRole"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCloudWatchLogsDeliveryFullAccessPolicy7e5c81c0e9924716adae11767adf1c16:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "CloudWatchLogsDeliveryFullAccessPolicy-7e5c81c0-e992-4716-adae-11767adf1c16"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to write execution logs to CloudWatch\
+        \ Logs on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "logs:CreateLogDelivery"
+          - "logs:GetLogDelivery"
+          - "logs:UpdateLogDelivery"
+          - "logs:DeleteLogDelivery"
+          - "logs:ListLogDeliveries"
+          - "logs:PutResourcePolicy"
+          - "logs:DescribeResourcePolicies"
+          - "logs:DescribeLogGroups"
+          Effect: "Allow"
+      Roles: []
+      Users: []
+  IAMManagedPolicyPolicyserviceroleLambdaInvokeScopedAccessPolicye6ecbfaaaa584fafac4131161946b914:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "LambdaInvokeScopedAccessPolicy-e6ecbfaa-aa58-4faf-ac41-31161946b914"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to invoke Lambda functions on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-getnextperiod-bronze:*"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:*"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-clean-prefix-gold:*"
+          Action: "lambda:InvokeFunction"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-getnextperiod-bronze"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-clean-prefix-gold"
+          Action: "lambda:InvokeFunction"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
