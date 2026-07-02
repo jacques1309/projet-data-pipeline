@@ -124,6 +124,9 @@
         <mxCell id="sUhRX0EalqfEbhgz1ZKD-3" edge="1" parent="v0nDohsJFVGjXo0yDHMI-3" source="v0nDohsJFVGjXo0yDHMI-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" target="v0nDohsJFVGjXo0yDHMI-67">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="sUhRX0EalqfEbhgz1ZKD-5" edge="1" parent="v0nDohsJFVGjXo0yDHMI-3" source="v0nDohsJFVGjXo0yDHMI-67" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;entryPerimeter=0;" target="v0nDohsJFVGjXo0yDHMI-33">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="v0nDohsJFVGjXo0yDHMI-45" parent="JP-vHedfdLIbHJkhREkO-1" style="sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;fillColor=#DD344C;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;resIcon=mxgraph.aws4.key_management_service;" value="KMS" vertex="1">
           <mxGeometry height="50" width="50" x="450" y="670" as="geometry" />
         </mxCell>
