@@ -1,0 +1,146 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/459d18b1-d29f-44f7-9057-a542d9b132c6"
+Resources:
+  IAMRoleNyctlciamrolegluesilver:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-iam-role-glue-silver"
+      Description: "Allows Glue to call AWS services on your behalf. "
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action: "iam:PassRole"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+          - Resource:
+            - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+            - "arn:aws:kms:eu-west-3:977237814516:key/82e7e0dd-d237-4996-9869-d0c6f5f0cb16"
+            Action:
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            - "dynamodb:Query"
+            Effect: "Allow"
+            Sid: "VisualEditor1"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+            Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor2"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+            Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor3"
+        PolicyName: "nyctlc-iam-policy-bronze-silver-kms-access"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "glue.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessSilver"
+      - Value: "true"
+        Key: "AccessBronze"
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "jacques"
+        Key: "Owner"
+      - Value: "Silver"
+        Key: "Layer"
+      - Value: "Console"
+        Key: "ManagedBy"
+  GlueCrawlerNyctlcgluecrawlersilver:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Glue::Crawler"
+    DeletionPolicy: "Retain"
+    Properties:
+      Role: "nyctlc-iam-role-glue-silver"
+      Classifiers: []
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "DEPRECATE_IN_DATABASE"
+      Configuration: "{\"Version\":1.0,\"CreatePartitionIndex\":true}"
+      LakeFormationConfiguration:
+        UseLakeFormationCredentials: false
+        AccountId: ""
+      RecrawlPolicy:
+        RecrawlBehavior: "CRAWL_EVERYTHING"
+      DatabaseName: "nyctlc-glue-database"
+      Targets:
+        HudiTargets: []
+        S3Targets:
+        - Path: "s3://nyctlc-s3-silver/trips/service_type=fhvhv/"
+          Exclusions: []
+        - Path: "s3://nyctlc-s3-silver/trips/service_type=green/"
+          Exclusions: []
+        - Path: "s3://nyctlc-s3-silver/trips/service_type=yellow/"
+          Exclusions: []
+        - Path: "s3://nyctlc-s3-silver/reference/taxi_zones/"
+          Exclusions: []
+        CatalogTargets: []
+        DeltaTargets: []
+        MongoDBTargets: []
+        JdbcTargets: []
+        DynamoDBTargets: []
+        IcebergTargets: []
+      TablePrefix: "silver-"
+      Tags:
+        AccessSilver: "true"
+      Name: "nyctlc-glue-crawler-silver"
+  GlueCrawlerNyctlcgluecrawlerbronze:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Glue::Crawler"
+    DeletionPolicy: "Retain"
+    Properties:
+      Role: "nyctlc-iam-role-glue-silver"
+      Classifiers: []
+      SchemaChangePolicy:
+        UpdateBehavior: "UPDATE_IN_DATABASE"
+        DeleteBehavior: "DEPRECATE_IN_DATABASE"
+      Configuration: "{\"Version\":1.0,\"CreatePartitionIndex\":true}"
+      LakeFormationConfiguration:
+        UseLakeFormationCredentials: false
+        AccountId: ""
+      RecrawlPolicy:
+        RecrawlBehavior: "CRAWL_EVERYTHING"
+      DatabaseName: "nyctlc-glue-database"
+      Targets:
+        HudiTargets: []
+        S3Targets:
+        - Path: "s3://nyctlc-s3-bronze/fhvhv/"
+          Exclusions: []
+        - Path: "s3://nyctlc-s3-bronze/green/"
+          Exclusions: []
+        - Path: "s3://nyctlc-s3-bronze/yellow/"
+          Exclusions: []
+        CatalogTargets: []
+        DeltaTargets: []
+        MongoDBTargets: []
+        JdbcTargets: []
+        DynamoDBTargets: []
+        IcebergTargets: []
+      TablePrefix: "bronze-"
+      Tags:
+        owner: "Jacques"
+        Project: "Projet Data Pipeline"
+        Layer: "Bronze"
+        AccessBronze: "true"
+      Name: "nyctlc-glue-crawler-bronze"

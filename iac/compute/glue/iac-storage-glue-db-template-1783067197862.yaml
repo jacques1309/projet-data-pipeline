@@ -1,0 +1,20 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/c932d2fa-5d1a-400a-9374-013107709e30"
+Resources:
+  GlueDatabaseNyctlcgluedatabase:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Glue::Database"
+    DeletionPolicy: "Retain"
+    Properties:
+      DatabaseName: "nyctlc-glue-database"
+      CatalogId: "977237814516"
+      DatabaseInput:
+        CreateTableDefaultPermissions:
+        - Permissions:
+          - "ALL"
+          Principal:
+            DataLakePrincipalIdentifier: "IAM_ALLOWED_PRINCIPALS"
+        Parameters: {}
+        Name: "nyctlc-glue-database"

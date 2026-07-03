@@ -1,0 +1,106 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/afff2e27-a57d-4989-bf81-4179e06df208"
+Resources:
+  GlueJobNyctlcgluecleaningsilverscript:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Glue::Job"
+    DeletionPolicy: "Retain"
+    Properties:
+      MaxRetries: 0
+      JobMode: "SCRIPT"
+      Description: ""
+      Timeout: 10
+      AllocatedCapacity: 20
+      JobRunQueuingEnabled: false
+      Name: "nyctlc-glue-cleaning-silver-script"
+      Role: "arn:aws:iam::977237814516:role/nyctlc-iam-role-glue-silver"
+      DefaultArguments:
+        "--enable-spark-ui": "true"
+        "--enable-metrics": "true"
+        "--spark-event-logs-path": "s3://nyctlc-s3-scripts/pyspark/logs/"
+        "--enable-job-insights": "true"
+        "--enable-observability-metrics": "true"
+        "--enable-glue-datacatalog": "true"
+        "--conf": "spark.eventLog.rolling.enabled=true --conf spark.sql.catalog.glue_catalog.glue.skip-name-validation=true"
+        "--enable-continuous-cloudwatch-log": "true"
+        "--job-bookmark-option": "job-bookmark-disable"
+        "--job-language": "python"
+        "--TempDir": "s3://nyctlc-s3-scripts/pyspark/"
+        "--enable-auto-scaling": "true"
+      WorkerType: "G.2X"
+      ExecutionClass: "STANDARD"
+      Command:
+        ScriptLocation: "s3://nyctlc-s3-scripts/pyspark/nyctlc-glue-cleaning-silver-script.py"
+        PythonVersion: "3"
+        Name: "glueetl"
+      GlueVersion: "5.1"
+      ExecutionProperty:
+        MaxConcurrentRuns: 3
+      NumberOfWorkers: 10
+      MaxCapacity: 20
+  IAMRoleNyctlciamrolegluesilver:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole"
+      MaxSessionDuration: 3600
+      RoleName: "nyctlc-iam-role-glue-silver"
+      Description: "Allows Glue to call AWS services on your behalf. "
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action: "iam:PassRole"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+          - Resource:
+            - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+            - "arn:aws:kms:eu-west-3:977237814516:key/82e7e0dd-d237-4996-9869-d0c6f5f0cb16"
+            Action:
+            - "kms:Decrypt"
+            - "kms:DescribeKey"
+            - "dynamodb:Query"
+            Effect: "Allow"
+            Sid: "VisualEditor1"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+            Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor2"
+          - Resource: "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+            Action:
+            - "kms:Decrypt"
+            - "kms:GenerateDataKey"
+            - "kms:DescribeKey"
+            Effect: "Allow"
+            Sid: "VisualEditor3"
+        PolicyName: "nyctlc-iam-policy-bronze-silver-kms-access"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "glue.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessSilver"
+      - Value: "true"
+        Key: "AccessBronze"
+      - Value: "Projet Data Pipeline"
+        Key: "Project"
+      - Value: "jacques"
+        Key: "Owner"
+      - Value: "Silver"
+        Key: "Layer"
+      - Value: "Console"
+        Key: "ManagedBy"
