@@ -1,0 +1,182 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/c104adcf-39f2-4874-a951-601831914766"
+Resources:
+  AthenaNamedQuery5b8eefbe6e3546f99938a894ca0a6067:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      Description: "DATAMART 4 : Grain : pu_borough x do_borough x service_type  k-anonymat\
+        \ critique ici (couloirs rares) -> HAVING >= 5."
+      QueryString: "CREATE TABLE \"nyctlc-glue-database\".gold_od_matrix\nWITH (\n\
+        \    format = 'PARQUET',\n    parquet_compression = 'SNAPPY',\n    external_location\
+        \ = 's3://nyctlc-s3-gold/od_matrix/'\n) AS\nSELECT\n    pz.borough       \
+        \                        AS pu_borough,\n    dz.borough                  \
+        \             AS do_borough,\n    t.service_type,\n    COUNT(*)          \
+        \                       AS nb_courses,\n    SUM(t.trip_distance) / COUNT(*)\
+        \          AS distance_moy,\n    SUM(t.total_amount)  / COUNT(*)         \
+        \ AS revenu_moy\nFROM \"nyctlc-glue-database\".gold_trips_unified t\nLEFT\
+        \ JOIN \"nyctlc-glue-database\".\"silver-taxi_zone_lookup_csv\" pz\n     \
+        \  ON CAST(t.pu_location_id AS bigint) = pz.locationid\nLEFT JOIN \"nyctlc-glue-database\"\
+        .\"silver-taxi_zone_lookup_csv\" dz\n       ON CAST(t.do_location_id AS bigint)\
+        \ = dz.locationid\nWHERE t.total_amount > 0\nGROUP BY pz.borough, dz.borough,\
+        \ t.service_type\nHAVING COUNT(*) >= 5;\n"
+      Name: "od_matrix"
+  AthenaNamedQueryE8a0fbb8b0b940e2a2cf6d98ffb91f04:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      QueryString: "SELECT zone, service_type, SUM(revenu_total) AS revenu\nFROM \"\
+        nyctlc-glue-database\".\"gold_revenue_by_zone_hour\"\nWHERE zone = '\"JFK\
+        \ Airport\"'\nGROUP BY zone, service_type\nORDER BY revenu DESC;"
+      Name: "Revenu par zone et par heure  - verif"
+  AthenaNamedQueryE3eca982c24f4345bb10ea31e8b507be:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      QueryString: "SELECT * FROM \"nyctlc-glue-database\".\"silver-taxi_zones\" limit\
+        \ 10;"
+      Name: "check lookup table"
+  AthenaNamedQuery94da81e9bded437ea172031084991e99:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      Description: " DATAMART 3 : Grain : date x heure x jour_semaine x service_type\
+        \  Volumes naturellement >> k=5, mais on garde le filtre par coherence."
+      QueryString: "CREATE TABLE \"nyctlc-glue-database\".gold_demand_timeseries\n\
+        WITH (\n    format = 'PARQUET',\n    parquet_compression = 'SNAPPY',\n   \
+        \ external_location = 's3://nyctlc-s3-gold/demand_timeseries/'\n) AS\nSELECT\n\
+        \    CAST(t.pickup_datetime AS date)          AS date_course,\n    hour(t.pickup_datetime)\
+        \                  AS heure,\n    day_of_week(t.pickup_datetime)         \
+        \  AS jour_semaine,\n    t.service_type,\n    COUNT(*)                   \
+        \              AS nb_courses,\n    SUM(t.trip_distance) / COUNT(*)       \
+        \   AS distance_moy,\n    SUM(t.trip_duration_sec) / COUNT(*)      AS duree_moy_sec,\n\
+        \    -- vitesse moyenne (mph) : distance(miles) / duree(heures)\n    SUM(t.trip_distance)\
+        \ / NULLIF(SUM(t.trip_duration_sec)/3600.0, 0) AS vitesse_moy_mph\nFROM \"\
+        nyctlc-glue-database\".gold_trips_unified t\nWHERE t.trip_duration_sec > 0\n\
+        GROUP BY\n    CAST(t.pickup_datetime AS date),\n    hour(t.pickup_datetime),\n\
+        \    day_of_week(t.pickup_datetime),\n    t.service_type\nHAVING COUNT(*)\
+        \ >= 5;\n \n"
+      Name: "demand_timeseries"
+  AthenaNamedQueryC5ff96291d8f4f82b8cb1feb72ca2cd9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      Description: "DATAMART 1 : Grain : service_type x borough x zone x jour_semaine\
+        \ x heure   Mesures additives (somme/count) -> moyennes recomposees a la lecture.\
+        \   k-anonymat : HAVING nb_courses >= 5."
+      QueryString: "CREATE TABLE \"nyctlc-glue-database\".gold_revenue_by_zone_hour\n\
+        WITH (\n    format = 'PARQUET',\n    parquet_compression = 'SNAPPY',\n   \
+        \ external_location = 's3://nyctlc-s3-gold/revenue_by_zone_hour/'\n) AS\n\
+        SELECT\n    t.service_type,\n    z.borough,\n    z.zone,\n    day_of_week(t.pickup_datetime)\
+        \            AS jour_semaine,   \n    hour(t.pickup_datetime)            \
+        \       AS heure,\n    COUNT(*)                                  AS nb_courses,\n\
+        \    SUM(t.total_amount)                       AS revenu_total,\n    SUM(t.tip_amount)\
+        \                         AS tip_total,\n    SUM(t.trip_distance)        \
+        \              AS distance_total,\n    SUM(t.trip_duration_sec)          \
+        \        AS duree_total_sec,\n    SUM(t.total_amount) / COUNT(*)         \
+        \   AS revenu_moyen,\n    SUM(t.total_amount) / NULLIF(SUM(t.trip_duration_sec)/60.0,\
+        \ 0) AS revenu_par_min,\n    SUM(t.tip_amount)   / NULLIF(SUM(t.fare_amount),\
+        \ 0) * 100.0    AS tip_pct,\n    SUM(t.trip_distance) / COUNT(*)         \
+        \  AS distance_moyenne\nFROM \"nyctlc-glue-database\".gold_trips_unified t\n\
+        LEFT JOIN \"nyctlc-glue-database\".\"silver-taxi_zone_lookup_csv\" z\n   \
+        \    ON CAST(t.pu_location_id AS bigint) = z.locationid\nWHERE t.total_amount\
+        \ > 0\n  AND t.trip_duration_sec > 0\nGROUP BY\n    t.service_type, z.borough,\
+        \ z.zone,\n    day_of_week(t.pickup_datetime), hour(t.pickup_datetime)\nHAVING\
+        \ COUNT(*) >= 5\n \n"
+      Name: "revenue_by_zone_hour"
+  AthenaNamedQuery4e1bb4588b804060bcf811514c32195c:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      Description: "DATAMART 2 :  Grain : service_type x borough  Part de marche recomposee\
+        \ via window SUM (additif)."
+      QueryString: "CREATE TABLE \"nyctlc-glue-database\".gold_service_comparison\n\
+        WITH (\n    format = 'PARQUET',\n    parquet_compression = 'SNAPPY',\n   \
+        \ external_location = 's3://nyctlc-s3-gold/service_comparison/'\n) AS\nWITH\
+        \ base AS (\n    SELECT\n        t.service_type,\n        z.borough,\n   \
+        \     COUNT(*)                                       AS nb_courses,\n    \
+        \    APPROX_PERCENTILE(t.total_amount, 0.5)         AS panier_median,\n  \
+        \      SUM(t.tip_amount) / NULLIF(SUM(t.fare_amount),0) * 100.0 AS tip_pct,\n\
+        \        -- exclusif fhvhv : part de la remuneration chauffeur dans le prix\
+        \ paye\n        CASE WHEN t.service_type = 'fhvhv'\n             THEN SUM(t.driver_pay)\
+        \ / NULLIF(SUM(t.total_amount),0) * 100.0\n             ELSE NULL END    \
+        \                         AS driver_share_pct\n    FROM \"nyctlc-glue-database\"\
+        .gold_trips_unified t\n    LEFT JOIN \"nyctlc-glue-database\".\"silver-taxi_zone_lookup_csv\"\
+        \ z\n           ON CAST(t.pu_location_id AS bigint) = z.locationid\n    WHERE\
+        \ t.total_amount > 0\n    GROUP BY t.service_type, z.borough\n    HAVING COUNT(*)\
+        \ >= 5\n)\nSELECT\n    service_type,\n    borough,\n    nb_courses,\n    --\
+        \ part de marche du service DANS le borough (somme = 100% par borough)\n \
+        \   nb_courses * 100.0 / SUM(nb_courses) OVER (PARTITION BY borough) AS part_marche_pct,\n\
+        \    panier_median,\n    tip_pct,\n    driver_share_pct\nFROM base;\n"
+      Name: "service_comparison"
+  AthenaWorkGroupPrimary:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::WorkGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      WorkGroupConfiguration:
+        RequesterPaysEnabled: false
+        EnforceWorkGroupConfiguration: false
+        EngineVersion:
+          SelectedEngineVersion: "AUTO"
+        PublishCloudWatchMetricsEnabled: true
+        ResultConfiguration: {}
+      State: "ENABLED"
+      Tags: []
+      Name: "primary"
+  AthenaNamedQuery19d5c425e9cd42ca886019864bfb9e72:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      Description: "UNION ALL des 3 services + colonne service_type,  Factorise la\
+        \ logique pour que les 4 datamarts lisent une seule source. Une vue ne stocke\
+        \ rien (virtuelle) -> zero cout de stockage."
+      QueryString: "CREATE OR REPLACE VIEW \"nyctlc-glue-database\".gold_trips_unified\
+        \ AS\nSELECT 'yellow' AS service_type, pickup_datetime, dropoff_datetime,\n\
+        \       pu_location_id, do_location_id, trip_distance, trip_duration_sec,\n\
+        \       fare_amount, tip_amount, total_amount, driver_pay, payment_type,\n\
+        \       year, month\nFROM \"nyctlc-glue-database\".\"silver-service_type_yellow\"\
+        \nUNION ALL\nSELECT 'green' AS service_type, pickup_datetime, dropoff_datetime,\n\
+        \       pu_location_id, do_location_id, trip_distance, trip_duration_sec,\n\
+        \       fare_amount, tip_amount, total_amount, driver_pay, payment_type,\n\
+        \       year, month\nFROM \"nyctlc-glue-database\".\"silver-service_type_green\"\
+        \nUNION ALL\nSELECT 'fhvhv' AS service_type, pickup_datetime, dropoff_datetime,\n\
+        \       pu_location_id, do_location_id, trip_distance, trip_duration_sec,\n\
+        \       fare_amount, tip_amount, total_amount, driver_pay, payment_type,\n\
+        \       year, month\nFROM \"nyctlc-glue-database\".\"silver-service_type_fhvhv\"\
+        ;\n"
+      Name: "vue_unifiee"
+  AthenaNamedQueryF1a7006b3a3244aba496186b2a21b82a:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Athena::NamedQuery"
+    DeletionPolicy: "Retain"
+    Properties:
+      Database: "nyctlc-glue-database"
+      WorkGroup: "primary"
+      QueryString: "SELECT heure, COUNT(*) AS nb_lignes, SUM(nb_courses) AS courses\n\
+        FROM \"nyctlc-glue-database\".\"gold_revenue_by_zone_hour\"\nWHERE zone IN\
+        \ ('\"JFK Airport\"', 'LaGuardia Airport')\nGROUP BY heure\nORDER BY heure;"
+      Name: "verif_nb_heure"
