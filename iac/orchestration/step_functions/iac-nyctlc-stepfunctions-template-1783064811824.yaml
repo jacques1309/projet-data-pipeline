@@ -1,0 +1,136 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/532edc06-875a-44ba-9655-a6f8234cdba5"
+Resources:
+  StepFunctionsStateMachineStateMachinenyctlcstepfunctionpipelineorchestrator:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::StepFunctions::StateMachine"
+    DeletionPolicy: "Retain"
+    Properties:
+      DefinitionString: "{\"Comment\":\"NYC TLC - Pipeline complet en une state machine.\
+        \ Map bronze(Lambda)->silver(Glue) incremental par dataset (1 mois/run), puis\
+        \ gold Athena post-Map : refresh vue unifiee + Map parallele des 4 datamarts\
+        \ (DROP->clean S3->CTAS), full reload idempotent. Logs SNS succes/echec.\"\
+        ,\"StartAt\":\"ProcessDatasets\",\"States\":{\"ProcessDatasets\":{\"Type\"\
+        :\"Map\",\"MaxConcurrency\":3,\"ItemsPath\":\"$.datasets\",\"ItemSelector\"\
+        :{\"dataset.$\":\"$$.Map.Item.Value\"},\"ItemProcessor\":{\"ProcessorConfig\"\
+        :{\"Mode\":\"INLINE\"},\"StartAt\":\"IsDataAvailable\",\"States\":{\"IsDataAvailable\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::lambda:invoke\",\"Parameters\"\
+        :{\"FunctionName\":\"arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-getnextperiod-bronze:$LATEST\"\
+        ,\"Payload\":{\"dataset.$\":\"$.dataset\"}},\"ResultSelector\":{\"dataset.$\"\
+        :\"$.Payload.dataset\",\"period.$\":\"$.Payload.period\",\"hasWork.$\":\"\
+        $.Payload.hasWork\"},\"ResultPath\":\"$\",\"Retry\":[{\"ErrorEquals\":[\"\
+        Lambda.ServiceException\",\"Lambda.TooManyRequestsException\",\"Lambda.Unknown\"\
+        ],\"IntervalSeconds\":2,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Next\":\"\
+        HasWork\"},\"HasWork\":{\"Type\":\"Choice\",\"Choices\":[{\"Variable\":\"\
+        $.hasWork\",\"BooleanEquals\":false,\"Next\":\"NothingToDo\"}],\"Default\"\
+        :\"extract - bronze\"},\"NothingToDo\":{\"Type\":\"Succeed\",\"Comment\":\"\
+        Backfill a jour pour ce dataset, rien a traiter ce run.\"},\"extract - bronze\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::lambda:invoke\",\"Parameters\"\
+        :{\"FunctionName\":\"arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:$LATEST\"\
+        ,\"Payload\":{\"dataset.$\":\"$.dataset\",\"period.$\":\"$.period\"}},\"ResultSelector\"\
+        :{\"bronze_status.$\":\"$.Payload.status\",\"s3_uri.$\":\"$.Payload.s3_uri\"\
+        },\"ResultPath\":\"$.bronze\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ServiceException\"\
+        ,\"Lambda.TooManyRequestsException\",\"Lambda.Unknown\"],\"IntervalSeconds\"\
+        :5,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Catch\":[{\"ErrorEquals\":[\"States.ALL\"\
+        ],\"ResultPath\":\"$.error\",\"Next\":\"MarkBronzeFailed\"}],\"Next\":\"MarkBronzeDone\"\
+        },\"MarkBronzeDone\":{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::dynamodb:putItem\"\
+        ,\"Parameters\":{\"TableName\":\"nyctlc-dynamodb-pipeline-state\",\"Item\"\
+        :{\"dataset\":{\"S.$\":\"$.dataset\"},\"period\":{\"S.$\":\"$.period\"},\"\
+        bronze_status\":{\"S\":\"DONE\"},\"bronze_detail\":{\"S.$\":\"$.bronze.bronze_status\"\
+        },\"silver_status\":{\"S\":\"PENDING\"},\"bronze_done_at\":{\"S.$\":\"$$.State.EnteredTime\"\
+        }}},\"ResultPath\":null,\"Next\":\"transform - silver\"},\"MarkBronzeFailed\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::dynamodb:putItem\",\"\
+        Parameters\":{\"TableName\":\"nyctlc-dynamodb-pipeline-state\",\"Item\":{\"\
+        dataset\":{\"S.$\":\"$.dataset\"},\"period\":{\"S.$\":\"$.period\"},\"bronze_status\"\
+        :{\"S\":\"FAILED\"},\"silver_status\":{\"S\":\"PENDING\"},\"bronze_done_at\"\
+        :{\"S.$\":\"$$.State.EnteredTime\"}}},\"ResultPath\":null,\"Next\":\"NotifyFailure\"\
+        },\"transform - silver\":{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::glue:startJobRun.sync\"\
+        ,\"Parameters\":{\"JobName\":\"nyctlc-glue-cleaning-silver-script\",\"Arguments\"\
+        :{\"--dataset.$\":\"$.dataset\",\"--period.$\":\"$.period\"}},\"ResultPath\"\
+        :\"$.silver\",\"Retry\":[{\"ErrorEquals\":[\"Glue.ConcurrentRunsExceededException\"\
+        ],\"IntervalSeconds\":30,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"MarkSilverFailed\"\
+        }],\"Next\":\"MarkSilverDone\"},\"MarkSilverDone\":{\"Type\":\"Task\",\"Resource\"\
+        :\"arn:aws:states:::dynamodb:updateItem\",\"Parameters\":{\"TableName\":\"\
+        nyctlc-dynamodb-pipeline-state\",\"Key\":{\"dataset\":{\"S.$\":\"$.dataset\"\
+        },\"period\":{\"S.$\":\"$.period\"}},\"UpdateExpression\":\"SET silver_status\
+        \ = :done, silver_done_at = :ts\",\"ExpressionAttributeValues\":{\":done\"\
+        :{\"S\":\"DONE\"},\":ts\":{\"S.$\":\"$$.State.EnteredTime\"}}},\"ResultPath\"\
+        :null,\"Next\":\"DatasetDone\"},\"MarkSilverFailed\":{\"Type\":\"Task\",\"\
+        Resource\":\"arn:aws:states:::dynamodb:updateItem\",\"Parameters\":{\"TableName\"\
+        :\"nyctlc-dynamodb-pipeline-state\",\"Key\":{\"dataset\":{\"S.$\":\"$.dataset\"\
+        },\"period\":{\"S.$\":\"$.period\"}},\"UpdateExpression\":\"SET silver_status\
+        \ = :failed, silver_done_at = :ts\",\"ExpressionAttributeValues\":{\":failed\"\
+        :{\"S\":\"FAILED\"},\":ts\":{\"S.$\":\"$$.State.EnteredTime\"}}},\"ResultPath\"\
+        :null,\"Next\":\"NotifyFailure\"},\"DatasetDone\":{\"Type\":\"Succeed\"},\"\
+        NotifyFailure\":{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::sns:publish\"\
+        ,\"Parameters\":{\"TopicArn\":\"arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline\"\
+        ,\"Subject\":\"NYC TLC pipeline - echec\",\"Message.$\":\"$\"},\"Next\":\"\
+        DatasetFailed\"},\"DatasetFailed\":{\"Type\":\"Fail\",\"Error\":\"DatasetProcessingFailed\"\
+        }}},\"ResultPath\":null,\"Next\":\"RefreshUnifiedView\"},\"RefreshUnifiedView\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::athena:startQueryExecution.sync\"\
+        ,\"Parameters\":{\"QueryString\":\"CREATE OR REPLACE VIEW gold_trips_unified\
+        \ AS SELECT 'yellow' AS service_type, pickup_datetime, dropoff_datetime, pu_location_id,\
+        \ do_location_id, trip_distance, trip_duration_sec, fare_amount, tip_amount,\
+        \ total_amount, driver_pay, payment_type, year, month FROM \\\"nyctlc-glue-database\\\
+        \".\\\"silver-service_type_yellow\\\" UNION ALL SELECT 'green', pickup_datetime,\
+        \ dropoff_datetime, pu_location_id, do_location_id, trip_distance, trip_duration_sec,\
+        \ fare_amount, tip_amount, total_amount, driver_pay, payment_type, year, month\
+        \ FROM \\\"nyctlc-glue-database\\\".\\\"silver-service_type_green\\\" UNION\
+        \ ALL SELECT 'fhvhv', pickup_datetime, dropoff_datetime, pu_location_id, do_location_id,\
+        \ trip_distance, trip_duration_sec, fare_amount, tip_amount, total_amount,\
+        \ driver_pay, payment_type, year, month FROM \\\"nyctlc-glue-database\\\"\
+        .\\\"silver-service_type_fhvhv\\\"\",\"WorkGroup\":\"primary\",\"ResultConfiguration\"\
+        :{\"OutputLocation\":\"s3://nyctlc-s3-scripts/athena/results/\"},\"QueryExecutionContext\"\
+        :{\"Database\":\"nyctlc-glue-database\"}},\"ResultPath\":null,\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"NotifyGoldFailure\"\
+        }],\"Next\":\"BuildDatamarts\"},\"BuildDatamarts\":{\"Type\":\"Map\",\"MaxConcurrency\"\
+        :4,\"ItemsPath\":\"$.datamarts\",\"ItemSelector\":{\"drop.$\":\"$$.Map.Item.Value.drop\"\
+        ,\"prefix.$\":\"$$.Map.Item.Value.prefix\",\"ctas.$\":\"$$.Map.Item.Value.ctas\"\
+        },\"ItemProcessor\":{\"ProcessorConfig\":{\"Mode\":\"INLINE\"},\"StartAt\"\
+        :\"DropTable\",\"States\":{\"DropTable\":{\"Type\":\"Task\",\"Resource\":\"\
+        arn:aws:states:::athena:startQueryExecution.sync\",\"Parameters\":{\"QueryString.$\"\
+        :\"$.drop\",\"WorkGroup\":\"primary\",\"ResultConfiguration\":{\"OutputLocation\"\
+        :\"s3://nyctlc-s3-scripts/athena/results/\"},\"QueryExecutionContext\":{\"\
+        Database\":\"nyctlc-glue-database\"}},\"ResultPath\":null,\"Catch\":[{\"ErrorEquals\"\
+        :[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"DatamartFailed\"}],\"\
+        Next\":\"CleanPrefix\"},\"CleanPrefix\":{\"Type\":\"Task\",\"Resource\":\"\
+        arn:aws:states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-clean-prefix-gold:$LATEST\"\
+        ,\"Payload\":{\"prefix.$\":\"$.prefix\"}},\"ResultPath\":null,\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"DatamartFailed\"\
+        }],\"Next\":\"datamarts - gold\"},\"datamarts - gold\":{\"Type\":\"Task\"\
+        ,\"Resource\":\"arn:aws:states:::athena:startQueryExecution.sync\",\"Parameters\"\
+        :{\"QueryString.$\":\"$.ctas\",\"WorkGroup\":\"primary\",\"ResultConfiguration\"\
+        :{\"OutputLocation\":\"s3://nyctlc-s3-scripts/athena/results/\"},\"QueryExecutionContext\"\
+        :{\"Database\":\"nyctlc-glue-database\"}},\"ResultPath\":null,\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"DatamartFailed\"\
+        }],\"Next\":\"DatamartDone\"},\"DatamartDone\":{\"Type\":\"Succeed\"},\"DatamartFailed\"\
+        :{\"Type\":\"Fail\",\"Error\":\"DatamartBuildFailed\"}}},\"ResultPath\":null,\"\
+        Catch\":[{\"ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\"\
+        :\"NotifyGoldFailure\"}],\"Next\":\"NotifyGoldSuccess\"},\"NotifyGoldSuccess\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::sns:publish\",\"Parameters\"\
+        :{\"TopicArn\":\"arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline\"\
+        ,\"Subject\":\"NYC TLC pipeline - succes complet\",\"Message\":\"Pipeline\
+        \ complet OK : bronze->silver (incremental) + gold (4 datamarts recharges\
+        \ en parallele).\"},\"Next\":\"PipelineSucceeded\"},\"PipelineSucceeded\"\
+        :{\"Type\":\"Succeed\"},\"NotifyGoldFailure\":{\"Type\":\"Task\",\"Resource\"\
+        :\"arn:aws:states:::sns:publish\",\"Parameters\":{\"TopicArn\":\"arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline\"\
+        ,\"Subject\":\"NYC TLC pipeline - echec couche gold\",\"Message.$\":\"States.Format('Echec\
+        \ couche gold : {}', $.error)\"},\"Next\":\"GoldFailed\"},\"GoldFailed\":{\"\
+        Type\":\"Fail\",\"Error\":\"GoldPipelineFailed\"}},\"TimeoutSeconds\":750}"
+      EncryptionConfiguration:
+        Type: "AWS_OWNED_KEY"
+      LoggingConfiguration:
+        IncludeExecutionData: true
+        Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn: "arn:aws:logs:eu-west-3:977237814516:log-group:nyctlc-stepfunction-pipeline-orchestrator-Logs:*"
+        Level: "ALL"
+      StateMachineName: "nyctlc-stepfunction-pipeline-orchestrator"
+      RoleArn: "arn:aws:iam::977237814516:role/service-role/StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Tags: []
+      StateMachineType: "STANDARD"
+      TracingConfiguration:
+        Enabled: false
