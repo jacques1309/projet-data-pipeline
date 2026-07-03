@@ -1,0 +1,206 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/c2f54a34-bf20-4c88-8cbd-684edafe6f15"
+Resources:
+  ApiGatewayStageProd:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Stage"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+      DeploymentId: "halc02"
+      StageName: "prod"
+      CacheClusterSize: "0.5"
+      TracingEnabled: false
+      CacheClusterEnabled: false
+  ApiGatewayRestApi:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::RestApi"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiKeySourceType: "HEADER"
+      EndpointConfiguration:
+        IpAddressType: "ipv4"
+        Types:
+        - "REGIONAL"
+      DisableExecuteApiEndpoint: false
+      SecurityPolicy: "SecurityPolicy_TLS13_1_3_2025_09"
+      Name: "nyctlc-apigateway-apirest"
+      EndpointAccessMode: "STRICT"
+  ApiGatewayUsagePlanKey:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::UsagePlanKey"
+    DeletionPolicy: "Retain"
+    Properties:
+      KeyType: "API_KEY"
+      UsagePlanId: "xe9n58"
+      KeyId: "i80jm51svc"
+  ApiGatewayGatewayResponseTu:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::GatewayResponse"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+      ResponseTemplates:
+        application/json: "{\"message\":$context.error.messageString}"
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS'"
+      ResponseType: "DEFAULT_5XX"
+  ApiGatewayDeployment:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayDeploymentSO:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+      Description: "env : prod"
+  ApiGatewayUsagePlan:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::UsagePlan"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiStages:
+      - Stage: "prod"
+        ApiId: "wh09p0xov1"
+        Throttle: {}
+      Quota:
+        Period: "DAY"
+        Limit: 10
+        Offset: 0
+      Throttle:
+        BurstLimit: 3
+        RateLimit: 7
+      UsagePlanName: "rate_limit"
+  ApiGatewayDeploymentIq:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayResource:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      ParentId: "xvvzslj1dk"
+      PathPart: "od-matrix"
+      RestApiId: "wh09p0xov1"
+  ApiGatewayDeploymentEl:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayResourceFn:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      ParentId: "xvvzslj1dk"
+      PathPart: "revenue-by-zone-hour"
+      RestApiId: "wh09p0xov1"
+  ApiGatewayGatewayResponse:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::GatewayResponse"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+      ResponseTemplates:
+        application/json: "{\"message\":$context.error.messageString}"
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Methods: "'OPTIONS'"
+      ResponseType: "DEFAULT_4XX"
+  ApiGatewayDeploymentFh:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayResourceYG:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      ParentId: "xvvzslj1dk"
+      PathPart: "demand-timeseries"
+      RestApiId: "wh09p0xov1"
+  ApiGatewayApiKey:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::ApiKey"
+    DeletionPolicy: "Retain"
+    Properties:
+      StageKeys: []
+      Value: "ClgMgZC3xy6qXVUWd6KO36r3xDKjGfqz2ZAJl9vP"
+      Enabled: true
+      Name: "api_key"
+  ApiGatewayResourceWj:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayDeploymentHV:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayResourceSE:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      ParentId: "xvvzslj1dk"
+      PathPart: "service-comparison"
+      RestApiId: "wh09p0xov1"
+  ApiGatewayModelQI:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Model"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+      Description: "This is a default error schema model"
+      ContentType: "application/json"
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: "Error Schema"
+        type: "object"
+        properties:
+          message:
+            type: "string"
+      Name: "Error"
+  ApiGatewayModel:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Model"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+      Description: "This is a default empty schema model"
+      ContentType: "application/json"
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: "Empty Schema"
+        type: "object"
+      Name: "Empty"
+  ApiGatewayDeploymentNz:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
+  ApiGatewayDeploymentLW:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "wh09p0xov1"
