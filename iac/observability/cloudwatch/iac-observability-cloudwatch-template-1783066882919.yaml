@@ -1,0 +1,574 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:eu-west-3:977237814516:generatedTemplate/27ba326c-b019-42e6-882b-c862340c5ab4"
+Resources:
+  CloudWatchDashboardNyctlccloudwatchdashboardkpi:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudWatch::Dashboard"
+    DeletionPolicy: "Retain"
+    Properties:
+      DashboardName: "nyctlc-cloudwatch-dashboard-kpi"
+      DashboardBody: "{\"widgets\":[{\"type\":\"metric\",\"x\":0,\"y\":0,\"width\"\
+        :24,\"height\":3,\"properties\":{\"metrics\":[[\"AWS/Lambda\",\"Invocations\"\
+        ,{\"label\":\"Nombre d'invocations\",\"region\":\"eu-west-3\"}],[\".\",\"\
+        Errors\",{\"label\":\"Nombre d'erreurs\",\"region\":\"eu-west-3\"}],[\".\"\
+        ,\"Duration\",{\"stat\":\"Average\",\"label\":\"Dur?e moyenne d'execution\"\
+        ,\"region\":\"eu-west-3\"}]],\"sparkline\":false,\"view\":\"singleValue\"\
+        ,\"region\":\"eu-west-3\",\"title\":\"Lambda monitoring\",\"period\":2592000,\"\
+        stat\":\"Sum\"}},{\"type\":\"metric\",\"x\":0,\"y\":3,\"width\":24,\"height\"\
+        :3,\"properties\":{\"metrics\":[[\"AWS/States\",\"ExecutionsSucceeded\",{\"\
+        region\":\"eu-west-3\",\"label\":\"Nb Executions r?ussi\"}],[\".\",\"ExecutionTime\"\
+        ,{\"stat\":\"Average\",\"region\":\"eu-west-3\",\"label\":\"Dur?e moyenne\
+        \ d'execution\"}],[\".\",\"ExecutionsFailed\",{\"region\":\"eu-west-3\",\"\
+        label\":\"Nb Executions ?chou?\"}],[\".\",\"ExecutionsAborted\",{\"region\"\
+        :\"eu-west-3\",\"label\":\"Nb Executions abandonn?\"}]],\"view\":\"singleValue\"\
+        ,\"stacked\":false,\"region\":\"eu-west-3\",\"stat\":\"Sum\",\"period\":2592000,\"\
+        title\":\"Step Functions monitoring\",\"liveData\":true}},{\"type\":\"metric\"\
+        ,\"x\":0,\"y\":6,\"width\":24,\"height\":3,\"properties\":{\"metrics\":[[\"\
+        Glue\",\"glue.ALL.memory.total.used.percentage\",\"Type\",\"gauge\",\"ObservabilityGroup\"\
+        ,\"resource_utilization\",\"JobRunId\",\"ALL\",\"JobName\",\"ALL\",{\"stat\"\
+        :\"Minimum\",\"visible\":false}],[\".\",\"glue.driver.skewness.stage\",\"\
+        .\",\".\",\".\",\"job_performance\",\".\",\".\",\".\",\".\",{\"visible\":false}],[\"\
+        .\",\"glue.driver.aggregate.numFailedTasks\",\".\",\"count\",\"JobRunId\"\
+        ,\"ALL\",\"JobName\",\"nyctlc-glue-cleaning-silver-script\"],[\".\",\"glue.driver.aggregate.numCompletedTasks\"\
+        ,\".\",\".\",\".\",\".\",\".\",\".\",{\"stat\":\"Average\"}],[\".\",\"glue.driver.aggregate.numCompletedStages\"\
+        ,\".\",\".\",\".\",\".\",\".\",\".\",{\"label\":\"Nb de lignes traites\"}]],\"\
+        view\":\"singleValue\",\"stacked\":false,\"region\":\"eu-west-3\",\"stat\"\
+        :\"Sum\",\"period\":2592000,\"liveData\":true,\"sparkline\":false,\"title\"\
+        :\"Glue jobs - monitoring\"}},{\"type\":\"metric\",\"x\":0,\"y\":9,\"width\"\
+        :24,\"height\":3,\"properties\":{\"metrics\":[[\"AWS/QuickSight\",\"IngestionErrorCount\"\
+        ,{\"region\":\"eu-west-3\",\"label\":\"Nb d'erreur d'ingestion\"}],[\".\"\
+        ,\"IngestionInvocationCount\",{\"region\":\"eu-west-3\",\"label\":\"Nb ingestion\"\
+        }],[\".\",\"IngestionLatency\",{\"stat\":\"Average\",\"region\":\"eu-west-3\"\
+        ,\"label\":\"Duree moyenne d'ingestion\"}],[\".\",\"IngestionRowCount\",{\"\
+        region\":\"eu-west-3\",\"label\":\"Nb ligne ingeree\"}],[\".\",\"SPICECapacityConsumedInMB\"\
+        ,{\"region\":\"eu-west-3\",\"label\":\"Cache SPICE consommation (en MB)\"\
+        }],[\".\",\"SPICECapacityLimitInMB\",{\"stat\":\"IQM\",\"region\":\"eu-west-3\"\
+        ,\"label\":\"Cache SPICE limite (en GO)\"}]],\"sparkline\":false,\"view\"\
+        :\"singleValue\",\"region\":\"eu-west-3\",\"stat\":\"Sum\",\"period\":2592000,\"\
+        title\":\"Quicksight - monitoring\"}},{\"type\":\"metric\",\"x\":0,\"y\":12,\"\
+        width\":24,\"height\":3,\"properties\":{\"metrics\":[[\"AWS/ApiGateway\",\"\
+        Count\",{\"label\":\"nombre total de demandes d'API\",\"region\":\"eu-west-3\"\
+        }],[\".\",\"IntegrationLatency\",\"ApiName\",\"nyctlc-apigateway-apirest\"\
+        ,{\"stat\":\"Average\",\"region\":\"eu-west-3\"}],[\".\",\"Latency\",\".\"\
+        ,\".\",{\"stat\":\"Average\",\"region\":\"eu-west-3\"}],[\".\",\"4XXError\"\
+        ,\".\",\".\",{\"region\":\"eu-west-3\"}],[\".\",\"5XXError\",\".\",\".\",{\"\
+        region\":\"eu-west-3\"}]],\"view\":\"singleValue\",\"stacked\":false,\"region\"\
+        :\"eu-west-3\",\"stat\":\"Sum\",\"period\":2592000,\"title\":\"Api Gateway\
+        \ - monitoring\"}}]}"
+      Tags: []
+  IAMRoleStepFunctionsnyctlcstepfunctionpipelineorchesrolehj9s04vmz:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::977237814516:policy/service-role/AthenaStartQueryExecutionManagementScopedAccessPolicy-a2de3023-db86-4150-b071-a77843e6172b"
+      - "arn:aws:iam::977237814516:policy/service-role/LambdaInvokeScopedAccessPolicy-e6ecbfaa-aa58-4faf-ac41-31161946b914"
+      - "arn:aws:iam::977237814516:policy/service-role/GlueJobRunManagementFullAccessPolicy-19cd31f8-483b-46b4-ab05-f97b2091d9e1"
+      - "arn:aws:iam::977237814516:policy/service-role/XRayAccessPolicy-c0a9d41d-fafb-4ef8-a35a-ab56b6b952b4"
+      - "arn:aws:iam::977237814516:policy/service-role/DynamoDBTableContentScopedAccessPolicy-fb8adc34-afe5-4bcf-8b8f-c50c3ff8a143"
+      - "arn:aws:iam::977237814516:policy/service-role/CloudWatchLogsDeliveryFullAccessPolicy-a84d99af-e02a-42f8-a701-cfd68cf540c9"
+      - "arn:aws:iam::977237814516:policy/service-role/SnsPublishScopedAccessPolicy-5bd34d67-01ec-4b5a-9b23-e5a6c6f9a620"
+      MaxSessionDuration: 3600
+      RoleName: "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "states.amazonaws.com"
+      Tags:
+      - Value: "true"
+        Key: "AccessSilver"
+      - Value: "true"
+        Key: "AccessGold"
+  StepFunctionsStateMachineStateMachinenyctlcstepfunctionpipelineorchestrator:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::StepFunctions::StateMachine"
+    DeletionPolicy: "Retain"
+    Properties:
+      DefinitionString: "{\"Comment\":\"NYC TLC - Pipeline complet en une state machine.\
+        \ Map bronze(Lambda)->silver(Glue) incremental par dataset (1 mois/run), puis\
+        \ gold Athena post-Map : refresh vue unifiee + Map parallele des 4 datamarts\
+        \ (DROP->clean S3->CTAS), full reload idempotent. Logs SNS succes/echec.\"\
+        ,\"StartAt\":\"ProcessDatasets\",\"States\":{\"ProcessDatasets\":{\"Type\"\
+        :\"Map\",\"MaxConcurrency\":3,\"ItemsPath\":\"$.datasets\",\"ItemSelector\"\
+        :{\"dataset.$\":\"$$.Map.Item.Value\"},\"ItemProcessor\":{\"ProcessorConfig\"\
+        :{\"Mode\":\"INLINE\"},\"StartAt\":\"IsDataAvailable\",\"States\":{\"IsDataAvailable\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::lambda:invoke\",\"Parameters\"\
+        :{\"FunctionName\":\"arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-getnextperiod-bronze:$LATEST\"\
+        ,\"Payload\":{\"dataset.$\":\"$.dataset\"}},\"ResultSelector\":{\"dataset.$\"\
+        :\"$.Payload.dataset\",\"period.$\":\"$.Payload.period\",\"hasWork.$\":\"\
+        $.Payload.hasWork\"},\"ResultPath\":\"$\",\"Retry\":[{\"ErrorEquals\":[\"\
+        Lambda.ServiceException\",\"Lambda.TooManyRequestsException\",\"Lambda.Unknown\"\
+        ],\"IntervalSeconds\":2,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Next\":\"\
+        HasWork\"},\"HasWork\":{\"Type\":\"Choice\",\"Choices\":[{\"Variable\":\"\
+        $.hasWork\",\"BooleanEquals\":false,\"Next\":\"NothingToDo\"}],\"Default\"\
+        :\"extract - bronze\"},\"NothingToDo\":{\"Type\":\"Succeed\",\"Comment\":\"\
+        Backfill a jour pour ce dataset, rien a traiter ce run.\"},\"extract - bronze\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::lambda:invoke\",\"Parameters\"\
+        :{\"FunctionName\":\"arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:$LATEST\"\
+        ,\"Payload\":{\"dataset.$\":\"$.dataset\",\"period.$\":\"$.period\"}},\"ResultSelector\"\
+        :{\"bronze_status.$\":\"$.Payload.status\",\"s3_uri.$\":\"$.Payload.s3_uri\"\
+        },\"ResultPath\":\"$.bronze\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ServiceException\"\
+        ,\"Lambda.TooManyRequestsException\",\"Lambda.Unknown\"],\"IntervalSeconds\"\
+        :5,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Catch\":[{\"ErrorEquals\":[\"States.ALL\"\
+        ],\"ResultPath\":\"$.error\",\"Next\":\"MarkBronzeFailed\"}],\"Next\":\"MarkBronzeDone\"\
+        },\"MarkBronzeDone\":{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::dynamodb:putItem\"\
+        ,\"Parameters\":{\"TableName\":\"nyctlc-dynamodb-pipeline-state\",\"Item\"\
+        :{\"dataset\":{\"S.$\":\"$.dataset\"},\"period\":{\"S.$\":\"$.period\"},\"\
+        bronze_status\":{\"S\":\"DONE\"},\"bronze_detail\":{\"S.$\":\"$.bronze.bronze_status\"\
+        },\"silver_status\":{\"S\":\"PENDING\"},\"bronze_done_at\":{\"S.$\":\"$$.State.EnteredTime\"\
+        }}},\"ResultPath\":null,\"Next\":\"transform - silver\"},\"MarkBronzeFailed\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::dynamodb:putItem\",\"\
+        Parameters\":{\"TableName\":\"nyctlc-dynamodb-pipeline-state\",\"Item\":{\"\
+        dataset\":{\"S.$\":\"$.dataset\"},\"period\":{\"S.$\":\"$.period\"},\"bronze_status\"\
+        :{\"S\":\"FAILED\"},\"silver_status\":{\"S\":\"PENDING\"},\"bronze_done_at\"\
+        :{\"S.$\":\"$$.State.EnteredTime\"}}},\"ResultPath\":null,\"Next\":\"NotifyFailure\"\
+        },\"transform - silver\":{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::glue:startJobRun.sync\"\
+        ,\"Parameters\":{\"JobName\":\"nyctlc-glue-cleaning-silver-script\",\"Arguments\"\
+        :{\"--dataset.$\":\"$.dataset\",\"--period.$\":\"$.period\"}},\"ResultPath\"\
+        :\"$.silver\",\"Retry\":[{\"ErrorEquals\":[\"Glue.ConcurrentRunsExceededException\"\
+        ],\"IntervalSeconds\":30,\"MaxAttempts\":3,\"BackoffRate\":2}],\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"MarkSilverFailed\"\
+        }],\"Next\":\"MarkSilverDone\"},\"MarkSilverDone\":{\"Type\":\"Task\",\"Resource\"\
+        :\"arn:aws:states:::dynamodb:updateItem\",\"Parameters\":{\"TableName\":\"\
+        nyctlc-dynamodb-pipeline-state\",\"Key\":{\"dataset\":{\"S.$\":\"$.dataset\"\
+        },\"period\":{\"S.$\":\"$.period\"}},\"UpdateExpression\":\"SET silver_status\
+        \ = :done, silver_done_at = :ts\",\"ExpressionAttributeValues\":{\":done\"\
+        :{\"S\":\"DONE\"},\":ts\":{\"S.$\":\"$$.State.EnteredTime\"}}},\"ResultPath\"\
+        :null,\"Next\":\"DatasetDone\"},\"MarkSilverFailed\":{\"Type\":\"Task\",\"\
+        Resource\":\"arn:aws:states:::dynamodb:updateItem\",\"Parameters\":{\"TableName\"\
+        :\"nyctlc-dynamodb-pipeline-state\",\"Key\":{\"dataset\":{\"S.$\":\"$.dataset\"\
+        },\"period\":{\"S.$\":\"$.period\"}},\"UpdateExpression\":\"SET silver_status\
+        \ = :failed, silver_done_at = :ts\",\"ExpressionAttributeValues\":{\":failed\"\
+        :{\"S\":\"FAILED\"},\":ts\":{\"S.$\":\"$$.State.EnteredTime\"}}},\"ResultPath\"\
+        :null,\"Next\":\"NotifyFailure\"},\"DatasetDone\":{\"Type\":\"Succeed\"},\"\
+        NotifyFailure\":{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::sns:publish\"\
+        ,\"Parameters\":{\"TopicArn\":\"arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline\"\
+        ,\"Subject\":\"NYC TLC pipeline - echec\",\"Message.$\":\"$\"},\"Next\":\"\
+        DatasetFailed\"},\"DatasetFailed\":{\"Type\":\"Fail\",\"Error\":\"DatasetProcessingFailed\"\
+        }}},\"ResultPath\":null,\"Next\":\"RefreshUnifiedView\"},\"RefreshUnifiedView\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::athena:startQueryExecution.sync\"\
+        ,\"Parameters\":{\"QueryString\":\"CREATE OR REPLACE VIEW gold_trips_unified\
+        \ AS SELECT 'yellow' AS service_type, pickup_datetime, dropoff_datetime, pu_location_id,\
+        \ do_location_id, trip_distance, trip_duration_sec, fare_amount, tip_amount,\
+        \ total_amount, driver_pay, payment_type, year, month FROM \\\"nyctlc-glue-database\\\
+        \".\\\"silver-service_type_yellow\\\" UNION ALL SELECT 'green', pickup_datetime,\
+        \ dropoff_datetime, pu_location_id, do_location_id, trip_distance, trip_duration_sec,\
+        \ fare_amount, tip_amount, total_amount, driver_pay, payment_type, year, month\
+        \ FROM \\\"nyctlc-glue-database\\\".\\\"silver-service_type_green\\\" UNION\
+        \ ALL SELECT 'fhvhv', pickup_datetime, dropoff_datetime, pu_location_id, do_location_id,\
+        \ trip_distance, trip_duration_sec, fare_amount, tip_amount, total_amount,\
+        \ driver_pay, payment_type, year, month FROM \\\"nyctlc-glue-database\\\"\
+        .\\\"silver-service_type_fhvhv\\\"\",\"WorkGroup\":\"primary\",\"ResultConfiguration\"\
+        :{\"OutputLocation\":\"s3://nyctlc-s3-scripts/athena/results/\"},\"QueryExecutionContext\"\
+        :{\"Database\":\"nyctlc-glue-database\"}},\"ResultPath\":null,\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"NotifyGoldFailure\"\
+        }],\"Next\":\"BuildDatamarts\"},\"BuildDatamarts\":{\"Type\":\"Map\",\"MaxConcurrency\"\
+        :4,\"ItemsPath\":\"$.datamarts\",\"ItemSelector\":{\"drop.$\":\"$$.Map.Item.Value.drop\"\
+        ,\"prefix.$\":\"$$.Map.Item.Value.prefix\",\"ctas.$\":\"$$.Map.Item.Value.ctas\"\
+        },\"ItemProcessor\":{\"ProcessorConfig\":{\"Mode\":\"INLINE\"},\"StartAt\"\
+        :\"DropTable\",\"States\":{\"DropTable\":{\"Type\":\"Task\",\"Resource\":\"\
+        arn:aws:states:::athena:startQueryExecution.sync\",\"Parameters\":{\"QueryString.$\"\
+        :\"$.drop\",\"WorkGroup\":\"primary\",\"ResultConfiguration\":{\"OutputLocation\"\
+        :\"s3://nyctlc-s3-scripts/athena/results/\"},\"QueryExecutionContext\":{\"\
+        Database\":\"nyctlc-glue-database\"}},\"ResultPath\":null,\"Catch\":[{\"ErrorEquals\"\
+        :[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"DatamartFailed\"}],\"\
+        Next\":\"CleanPrefix\"},\"CleanPrefix\":{\"Type\":\"Task\",\"Resource\":\"\
+        arn:aws:states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-clean-prefix-gold:$LATEST\"\
+        ,\"Payload\":{\"prefix.$\":\"$.prefix\"}},\"ResultPath\":null,\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"DatamartFailed\"\
+        }],\"Next\":\"datamarts - gold\"},\"datamarts - gold\":{\"Type\":\"Task\"\
+        ,\"Resource\":\"arn:aws:states:::athena:startQueryExecution.sync\",\"Parameters\"\
+        :{\"QueryString.$\":\"$.ctas\",\"WorkGroup\":\"primary\",\"ResultConfiguration\"\
+        :{\"OutputLocation\":\"s3://nyctlc-s3-scripts/athena/results/\"},\"QueryExecutionContext\"\
+        :{\"Database\":\"nyctlc-glue-database\"}},\"ResultPath\":null,\"Catch\":[{\"\
+        ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\":\"DatamartFailed\"\
+        }],\"Next\":\"DatamartDone\"},\"DatamartDone\":{\"Type\":\"Succeed\"},\"DatamartFailed\"\
+        :{\"Type\":\"Fail\",\"Error\":\"DatamartBuildFailed\"}}},\"ResultPath\":null,\"\
+        Catch\":[{\"ErrorEquals\":[\"States.ALL\"],\"ResultPath\":\"$.error\",\"Next\"\
+        :\"NotifyGoldFailure\"}],\"Next\":\"NotifyGoldSuccess\"},\"NotifyGoldSuccess\"\
+        :{\"Type\":\"Task\",\"Resource\":\"arn:aws:states:::sns:publish\",\"Parameters\"\
+        :{\"TopicArn\":\"arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline\"\
+        ,\"Subject\":\"NYC TLC pipeline - succes complet\",\"Message\":\"Pipeline\
+        \ complet OK : bronze->silver (incremental) + gold (4 datamarts recharges\
+        \ en parallele).\"},\"Next\":\"PipelineSucceeded\"},\"PipelineSucceeded\"\
+        :{\"Type\":\"Succeed\"},\"NotifyGoldFailure\":{\"Type\":\"Task\",\"Resource\"\
+        :\"arn:aws:states:::sns:publish\",\"Parameters\":{\"TopicArn\":\"arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline\"\
+        ,\"Subject\":\"NYC TLC pipeline - echec couche gold\",\"Message.$\":\"States.Format('Echec\
+        \ couche gold : {}', $.error)\"},\"Next\":\"GoldFailed\"},\"GoldFailed\":{\"\
+        Type\":\"Fail\",\"Error\":\"GoldPipelineFailed\"}},\"TimeoutSeconds\":750}"
+      EncryptionConfiguration:
+        Type: "AWS_OWNED_KEY"
+      LoggingConfiguration:
+        IncludeExecutionData: true
+        Destinations:
+        - CloudWatchLogsLogGroup:
+            LogGroupArn: "arn:aws:logs:eu-west-3:977237814516:log-group:nyctlc-stepfunction-pipeline-orchestrator-Logs:*"
+        Level: "ALL"
+      StateMachineName: "nyctlc-stepfunction-pipeline-orchestrator"
+      RoleArn: "arn:aws:iam::977237814516:role/service-role/StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Tags: []
+      StateMachineType: "STANDARD"
+      TracingConfiguration:
+        Enabled: false
+  SNSTopicNyctlcsnsstepfunctionfullpipeline:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::SNS::Topic"
+    DeletionPolicy: "Retain"
+    Properties:
+      FifoTopic: false
+      Subscription:
+      - Endpoint: "jacques@800200.fr"
+        Protocol: "email"
+      TracingConfig: "PassThrough"
+      ArchivePolicy: {}
+      TopicName: "nyctlc-sns-stepfunction-full-pipeline"
+  IAMManagedPolicyPolicyserviceroleSnsPublishScopedAccessPolicy5bd34d6701ec4b5a9b23e5a6c6f9a620:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "SnsPublishScopedAccessPolicy-5bd34d67-01ec-4b5a-9b23-e5a6c6f9a620"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to publish to SNS targets on your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline"
+          Action: "sns:Publish"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleXRayAccessPolicyc0a9d41dfafb4ef8a35aab56b6b952b4:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "XRayAccessPolicy-c0a9d41d-fafb-4ef8-a35a-ab56b6b952b4"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to call X-Ray daemon on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          - "xray:GetSamplingRules"
+          - "xray:GetSamplingTargets"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleDynamoDBTableContentScopedAccessPolicyfb8adc34afe54bcf8b8fc50c3ff8a143:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "DynamoDBTableContentScopedAccessPolicy-fb8adc34-afe5-4bcf-8b8f-c50c3ff8a143"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to perform DynamoDB actions on your\
+        \ behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-dynamodb-pipeline-state"
+          - "arn:aws:dynamodb:eu-west-3:977237814516:table/nyctlc-pipeline-state"
+          Action:
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:UpdateItem"
+          - "dynamodb:DeleteItem"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  CloudWatchAlarmAlarmstepfunctiontimeout:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudWatch::Alarm"
+    DeletionPolicy: "Retain"
+    Properties:
+      ComparisonOperator: "GreaterThanThreshold"
+      TreatMissingData: "missing"
+      Dimensions:
+      - Value: "arn:aws:states:eu-west-3:977237814516:stateMachine:nyctlc-stepfunction-pipeline-orchestrator"
+        Name: "StateMachineArn"
+      Period: 300
+      EvaluationPeriods: 1
+      Namespace: "AWS/States"
+      OKActions: []
+      AlarmActions:
+      - "arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline"
+      MetricName: "ExecutionsTimedOut"
+      ActionsEnabled: true
+      AlarmDescription: "Si l'ex?cution est tu?e (timeout global, throttle SFN ou\
+        \ abort), les ?tats Notify* ne s'ex?cutent JAMAIS, aucun mail applicatif.\
+        \ Angle mort total."
+      AlarmName: "alarm-stepfunction-timeout"
+      Statistic: "Average"
+      InsufficientDataActions: []
+      DatapointsToAlarm: 1
+      Tags: []
+      Threshold: 0
+  IAMManagedPolicyPolicyserviceroleAthenaStartQueryExecutionManagementScopedAccessPolicya2de3023db864150b071a77843e6172b:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AthenaStartQueryExecutionManagementScopedAccessPolicy-a2de3023-db86-4150-b071-a77843e6172b"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to start Athena query executions on\
+        \ your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:kms:eu-west-3:977237814516:key/60095d4e-9326-4a46-b044-8812c04767bd"
+          - "arn:aws:athena:eu-west-3:977237814516:workgroup/primary"
+          - "arn:aws:athena:eu-west-3:977237814516:datacatalog/*"
+          - "arn:aws:s3:::nyctlc-s3-gold/*"
+          - "arn:aws:s3:::nyctlc-s3-silver/*"
+          - "arn:aws:s3:::nyctlc-s3-scripts/athena/results/*"
+          - "arn:aws:s3:::nyctlc-s3-gold"
+          - "arn:aws:s3:::nyctlc-s3-silver"
+          - "arn:aws:s3:::nyctlc-s3-scripts"
+          - "arn:aws:glue:eu-west-3:977237814516:userDefinedFunction/*"
+          - "arn:aws:glue:eu-west-3:977237814516:catalog"
+          - "arn:aws:glue:eu-west-3:977237814516:table/*"
+          - "arn:aws:glue:eu-west-3:977237814516:database/*"
+          Action:
+          - "glue:BatchCreatePartition"
+          - "kms:Decrypt"
+          - "glue:DeleteDatabase"
+          - "glue:GetPartitions"
+          - "glue:BatchDeletePartition"
+          - "glue:UpdateTable"
+          - "glue:DeleteTable"
+          - "s3:AbortMultipartUpload"
+          - "kms:DescribeKey"
+          - "glue:CreatePartition"
+          - "athena:getQueryExecution"
+          - "athena:startQueryExecution"
+          - "glue:UpdatePartition"
+          - "glue:UpdateDatabase"
+          - "athena:getDataCatalog"
+          - "athena:stopQueryExecution"
+          - "glue:CreateTable"
+          - "glue:GetTables"
+          - "glue:BatchGetPartition"
+          - "glue:GetDatabases"
+          - "s3:ListMultipartUploadParts"
+          - "glue:GetTable"
+          - "glue:GetDatabase"
+          - "s3:PutObject"
+          - "s3:GetObject"
+          - "glue:GetPartition"
+          - "glue:CreateDatabase"
+          - "kms:GenerateDataKey"
+          - "athena:DeleteDataCatalog"
+          - "glue:BatchDeleteTable"
+          - "glue:DeletePartition"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource: "arn:aws:kms:eu-west-3:977237814516:key/3f5769cc-215a-48c1-a751-c773e9e427a7"
+          Action:
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey"
+          - "kms:DescribeKey"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+        - Resource: "*"
+          Action: "lakeformation:GetDataAccess"
+          Effect: "Allow"
+          Sid: "VisualEditor2"
+        - Resource:
+          - "arn:aws:s3:::*"
+          - "arn:aws:kms:eu-west-3:977237814516:key/c62d120c-d40e-4ee4-b870-19a11e8a8c4c"
+          Action:
+          - "s3:ListBucketMultipartUploads"
+          - "kms:Decrypt"
+          - "kms:GenerateDataKey"
+          - "s3:CreateBucket"
+          - "kms:DescribeKey"
+          - "s3:ListBucket"
+          - "s3:GetBucketLocation"
+          Effect: "Allow"
+          Sid: "VisualEditor3"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  CloudWatchAlarmAlarmstepfunctionschedulerded:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudWatch::Alarm"
+    DeletionPolicy: "Retain"
+    Properties:
+      ComparisonOperator: "LessThanThreshold"
+      TreatMissingData: "breaching"
+      Dimensions:
+      - Value: "arn:aws:states:eu-west-3:977237814516:stateMachine:nyctlc-stepfunction-pipeline-orchestrator"
+        Name: "StateMachineArn"
+      Period: 86400
+      EvaluationPeriods: 1
+      Namespace: "AWS/States"
+      OKActions: []
+      AlarmActions:
+      - "arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline"
+      MetricName: "ExecutionsStarted"
+      ActionsEnabled: true
+      AlarmDescription: "Si EventBridge Scheduler casse, SNS ne dira jamais rien (aucune\
+        \ ex?cution de stepfunction = aucun mail). Personne ne remarque que le pipeline\
+        \ est mort. C'est l'angle mort le plus dangereux"
+      AlarmName: "alarm-stepfunction-scheduler-ded"
+      Statistic: "Sum"
+      InsufficientDataActions: []
+      DatapointsToAlarm: 1
+      Tags: []
+      Threshold: 1
+  CloudWatchAlarmAlarmstepfunctionaborted:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudWatch::Alarm"
+    DeletionPolicy: "Retain"
+    Properties:
+      ComparisonOperator: "GreaterThanOrEqualToThreshold"
+      TreatMissingData: "missing"
+      Dimensions:
+      - Value: "arn:aws:states:eu-west-3:977237814516:stateMachine:nyctlc-stepfunction-pipeline-orchestrator"
+        Name: "StateMachineArn"
+      Period: 300
+      EvaluationPeriods: 1
+      Namespace: "AWS/States"
+      OKActions: []
+      AlarmActions:
+      - "arn:aws:sns:eu-west-3:977237814516:nyctlc-sns-stepfunction-full-pipeline"
+      MetricName: "ExecutionsAborted"
+      ActionsEnabled: true
+      AlarmDescription: "Si l'ex?cution est tu?e (timeout global, throttle SFN ou\
+        \ abort), les ?tats Notify* ne s'ex?cutent JAMAIS, aucun mail applicatif.\
+        \ Angle mort total."
+      AlarmName: "alarm-stepfunction-aborted"
+      Statistic: "Sum"
+      InsufficientDataActions: []
+      DatapointsToAlarm: 1
+      Tags: []
+      Threshold: 1
+  LogsLogGroupNyctlcstepfunctionpipelineorchestratorLogs:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      FieldIndexPolicies: []
+      RetentionInDays: 120
+      BearerTokenAuthenticationEnabled: false
+      LogGroupClass: "STANDARD"
+      ResourcePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              aws:SourceAccount: "977237814516"
+            ArnLike:
+              aws:SourceArn: "arn:aws:logs:eu-west-3:977237814516:*"
+          Resource: "arn:aws:logs:eu-west-3:977237814516:log-group:nyctlc-stepfunction-pipeline-orchestrator-Logs:log-stream:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+          Principal:
+            Service: "delivery.logs.amazonaws.com"
+          Sid: "AWSLogDeliveryWrite1"
+      LogGroupName: "nyctlc-stepfunction-pipeline-orchestrator-Logs"
+      DeletionProtectionEnabled: false
+      DataProtectionPolicy: {}
+  IAMManagedPolicyPolicyserviceroleGlueJobRunManagementFullAccessPolicy19cd31f8483b46b4ab05f97b2091d9e1:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "GlueJobRunManagementFullAccessPolicy-19cd31f8-483b-46b4-ab05-f97b2091d9e1"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to run Glue jobs on your behalf."
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          Action:
+          - "glue:StartJobRun"
+          - "glue:GetJobRun"
+          - "glue:GetJobRuns"
+          - "glue:BatchStopJobRun"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleCloudWatchLogsDeliveryFullAccessPolicya84d99afe02a42f8a701cfd68cf540c9:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "CloudWatchLogsDeliveryFullAccessPolicy-a84d99af-e02a-42f8-a701-cfd68cf540c9"
+      Path: "/service-role/"
+      Description: "Allows AWS Step Functions to write execution logs to CloudWatch\
+        \ Logs on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "logs:CreateLogDelivery"
+          - "logs:GetLogDelivery"
+          - "logs:UpdateLogDelivery"
+          - "logs:DeleteLogDelivery"
+          - "logs:ListLogDeliveries"
+          - "logs:PutResourcePolicy"
+          - "logs:DescribeResourcePolicies"
+          - "logs:DescribeLogGroups"
+          Effect: "Allow"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleLambdaInvokeScopedAccessPolicye6ecbfaaaa584fafac4131161946b914:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "LambdaInvokeScopedAccessPolicy-e6ecbfaa-aa58-4faf-ac41-31161946b914"
+      Path: "/service-role/"
+      Description: "Allow AWS Step Functions to invoke Lambda functions on your behalf"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-getnextperiod-bronze:*"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze:*"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-clean-prefix-gold:*"
+          Action: "lambda:InvokeFunction"
+          Effect: "Allow"
+          Sid: "VisualEditor0"
+        - Resource:
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-extract-bronze"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-getnextperiod-bronze"
+          - "arn:aws:lambda:eu-west-3:977237814516:function:nyctlc-lambda-clean-prefix-gold"
+          Action: "lambda:InvokeFunction"
+          Effect: "Allow"
+          Sid: "VisualEditor1"
+      Roles:
+      - "StepFunctions-nyctlc-stepfunction-pipeline-orches-role-hj9s04vmz"
+      Users: []
